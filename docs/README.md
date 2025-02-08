@@ -423,7 +423,7 @@ ___
 
 ### getJshCmsRedirect
 
-▸ **getJshCmsRedirect**(`request`, `redirectListingPath`): `Promise`\<[`JshCmsRoute`](interfaces/JshCmsRoute.md) \| `undefined`\>
+▸ **getJshCmsRedirect**(`pathname`, `contentUrl`, `redirectListingPath`): `Promise`\<[`JshCmsRoute`](interfaces/JshCmsRoute.md) \| `undefined`\>
 
 getJshCmsRedirect - Looks up matching redirect, if any.
 
@@ -431,7 +431,8 @@ getJshCmsRedirect - Looks up matching redirect, if any.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `request` | `NextRequest` | Request object providing target path and origin |
+| `pathname` | `string` | target path |
+| `contentUrl` | `string` | Origin for exported CMS redirects |
 | `redirectListingPath` | `string` | Path to exported CMS redirects |
 
 #### Returns
@@ -470,7 +471,7 @@ ___
 
 ### hasJshCmsPage
 
-▸ **hasJshCmsPage**(`request`, `contentPath`, `defaultDocument`): `Promise`\<`boolean`\>
+▸ **hasJshCmsPage**(`pathname`, `contentUrl`, `contentPath`, `defaultDocument`): `Promise`\<`boolean`\>
 
 hasJshCmsPage - Check if a page object file exists to decide if a route is available.
 
@@ -478,7 +479,8 @@ hasJshCmsPage - Check if a page object file exists to decide if a route is avail
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `request` | `NextRequest` | Request object providing target path and origin |
+| `pathname` | `string` | target url path name |
+| `contentUrl` | `string` | Origin url for CMS files |
 | `contentPath` | `string` | Path to CMS output folder |
 | `defaultDocument` | `string` | default document if not in url, e.g. 'index.html' |
 
@@ -530,7 +532,7 @@ ___
 
 ### processJshCmsRedirects
 
-▸ **processJshCmsRedirects**(`request`, `redirectListingPath`): `Promise`\<`NextResponse` \| `undefined`\>
+▸ **processJshCmsRedirects**(`request`, `contentUrl`, `redirectListingPath`): `Promise`\<`NextResponse` \| `undefined`\>
 
 processJshCmsRedirects - Small helper function to look up and execute redirects
 
@@ -539,6 +541,7 @@ processJshCmsRedirects - Small helper function to look up and execute redirects
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `request` | `NextRequest` | Request object providing target path and origin |
+| `contentUrl` | `string` | origin for redirect file |
 | `redirectListingPath` | `string` | Path to exported CMS redirects |
 
 #### Returns

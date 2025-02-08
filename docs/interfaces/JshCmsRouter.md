@@ -198,7 +198,7 @@ ___
 
 ### hasJshCmsPage
 
-▸ **hasJshCmsPage**(`request`): `Promise`\<`boolean`\>
+▸ **hasJshCmsPage**(`pathname`): `Promise`\<`boolean`\>
 
 hasJshCmsPage - Check if a page object file exists to decide if a route is available.
 
@@ -206,7 +206,7 @@ hasJshCmsPage - Check if a page object file exists to decide if a route is avail
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `request` | `NextRequest` | Request object providing target path and origin |
+| `pathname` | `string` | target path |
 
 #### Returns
 

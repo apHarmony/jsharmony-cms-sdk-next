@@ -69,16 +69,17 @@ export interface JshCmsRoute {
 
 /**
  * hasJshCmsPage - Check if a page object file exists to decide if a route is available.
- * @param request - Request object providing target path and origin
+ * @param pathname - target url path name
+ * @param contentUrl - Origin url for CMS files
  * @param contentPath - Path to CMS output folder
  * @param defaultDocument - default document if not in url, e.g. 'index.html'
  * @public
  */
-export async function hasJshCmsPage(request: NextRequest, contentPath: string, defaultDocument: string): Promise<boolean> {
-  const variations = resolveJshCmsPath(contentPath, request.nextUrl.pathname, defaultDocument);
+export async function hasJshCmsPage(pathname: string, contentUrl: string, contentPath: string, defaultDocument: string): Promise<boolean> {
+  const variations = resolveJshCmsPath(contentPath, pathname, defaultDocument);
 
-  for (const pathname of variations) {
-    const url = new URL(pathname, request.nextUrl.origin);
+  for (const path of variations) {
+    const url = new URL(path, contentUrl);
     const pageResponse = await fetch(url);
     if (pageResponse.ok) {return true;}
   }
@@ -88,15 +89,14 @@ export async function hasJshCmsPage(request: NextRequest, contentPath: string, d
 
 /**
  * getJshCmsRedirect - Looks up matching redirect, if any.
- * @param request - Request object providing target path and origin
+ * @param pathname - target path
+ * @param contentUrl - Origin for exported CMS redirects
  * @param redirectListingPath - Path to exported CMS redirects
  * @returns path and code if found
  * @public
  */
-export async function getJshCmsRedirect(request: NextRequest, redirectListingPath: string): Promise<JshCmsRoute | undefined> {
-  const pathname = request.nextUrl.pathname;
-
-  const redirectData: JshCmsRedirect[] = await loadJshCmsRedirectData(redirectListingPath, request.nextUrl.origin);
+export async function getJshCmsRedirect(pathname: string, contentUrl: string, redirectListingPath: string): Promise<JshCmsRoute | undefined> {
+  const redirectData: JshCmsRedirect[] = await loadJshCmsRedirectData(redirectListingPath, contentUrl);
 
   if (redirectData && redirectData.length > 0) {
     return matchJshCmsRedirect(redirectData, pathname);
@@ -124,12 +124,13 @@ export function processJshCmsRoute(route: JshCmsRoute, requestUrl: URL | string 
 /**
  * processJshCmsRedirects - Small helper function to look up and execute redirects
  * @param request - Request object providing target path and origin
+ * @param contentUrl - origin for redirect file
  * @param redirectListingPath - Path to exported CMS redirects
  * @returns Response, if a redirect was found
  * @public
  */
-export async function processJshCmsRedirects(request: NextRequest, redirectListingPath: string): Promise<NextResponse | undefined> {
-  const route = await getJshCmsRedirect(request, redirectListingPath);
+export async function processJshCmsRedirects(request: NextRequest, contentUrl: string, redirectListingPath: string): Promise<NextResponse | undefined> {
+  const route = await getJshCmsRedirect(request.nextUrl.pathname, contentUrl, redirectListingPath);
   if (route) {return processJshCmsRoute(route, request.url);}
 
   return undefined;
@@ -212,9 +213,9 @@ export interface JshCmsRouter {
   processJshCmsRedirects(request: NextRequest): Promise<NextResponse | undefined>,
   /**
    *hasJshCmsPage - Check if a page object file exists to decide if a route is available.
-   * @param request - Request object providing target path and origin
+   * @param pathname - target path
    */
-  hasJshCmsPage(request: NextRequest): Promise<boolean>,
+  hasJshCmsPage(pathname: string): Promise<boolean>,
   /**
    *getJshCmsStandalone [Main Entry Point] - Get CMS Page Data for Standalone Integration
    * @remarks
@@ -275,24 +276,24 @@ export function JshCmsRouter(this: JshCmsRouter, config: JshCmsConfig): JshCmsRo
   //================
 
   _this.getJshCmsRedirectListingPath = function(): string | undefined {
-    const redirecetListingPath = _this.redirect_listing_path;
-    if (!redirecetListingPath) {return;}
-    if (redirecetListingPath.charAt(0) !== '/'){
-      if (_this.content_path.endsWith('/')) {return _this.content_path + redirecetListingPath;} else {return `${_this.content_path  }/${  redirecetListingPath}`;}
+    const redirectListingPath = _this.redirect_listing_path;
+    if (!redirectListingPath) {return;}
+    if (redirectListingPath.charAt(0) !== '/'){
+      if (_this.content_path.endsWith('/')) {return _this.content_path + redirectListingPath;} else {return `${_this.content_path  }/${  redirectListingPath}`;}
     }
-    return redirecetListingPath;
+    return redirectListingPath;
   }
 
   _this.getJshCmsRedirectData = async function(origin: string): Promise<JshCmsRedirect[]> {
-    const redirecetListingPath = _this.getJshCmsRedirectListingPath();
-    if (!redirecetListingPath) {return [];}
-    return await loadJshCmsRedirectData(redirecetListingPath, origin);
+    const redirectListingPath = _this.getJshCmsRedirectListingPath();
+    if (!redirectListingPath) {return [];}
+    return await loadJshCmsRedirectData(redirectListingPath, origin);
   }
 
   _this.getJshCmsRedirect = async function(request: NextRequest): Promise<JshCmsRoute | undefined> {
-    const redirecetListingPath = _this.getJshCmsRedirectListingPath();
-    if (!redirecetListingPath) {return;}
-    return await getJshCmsRedirect(request, redirecetListingPath);
+    const redirectListingPath = _this.getJshCmsRedirectListingPath();
+    if (!redirectListingPath) {return;}
+    return await getJshCmsRedirect(request.nextUrl.pathname, this.content_url, redirectListingPath);
   }
 
   _this.processJshCmsRedirects = async function(request: NextRequest): Promise<NextResponse | undefined> {
@@ -302,8 +303,8 @@ export function JshCmsRouter(this: JshCmsRouter, config: JshCmsConfig): JshCmsRo
     return undefined;
   }
 
-  _this.hasJshCmsPage = async function(request: NextRequest) {
-    return await hasJshCmsPage(request, this.content_path, this.default_document);
+  _this.hasJshCmsPage = async function(pathname: string) {
+    return await hasJshCmsPage(pathname, this.content_url, this.content_path, this.default_document);
   }
 
   _this.getJshCmsStandalone = async function(pathname: string[] | string | undefined, searchParams: { [key: string]: string[] | string | undefined }) {
