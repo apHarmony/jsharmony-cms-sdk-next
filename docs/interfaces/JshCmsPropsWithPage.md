@@ -16,4 +16,4 @@
 
 ### page
 
-• **page**: [`JshCmsPage`](JshCmsPage.md)
+• **page**: [`JshCmsPage`](../classes/JshCmsPage.md)

@@ -7,25 +7,12 @@
 ### Properties
 
 - [params](JshCmsProps.md#params)
-- [searchParams](JshCmsProps.md#searchparams)
 
 ## Properties
 
 ### params
 
 • **params**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `id` | `string` |
-
-___
-
-### searchParams
-
-• **searchParams**: `Object`
 
 #### Index signature
 

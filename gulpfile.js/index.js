@@ -49,6 +49,18 @@ exports['build:prod'] = series(
 );
 
 /**
+ * Run this for dev build
+ */
+exports['build:dev'] = series(
+  cleanDist,
+  runRollupLib,
+  generateTypeDefs,
+  rollupDefinitionFiles,
+  copyFiles,
+  stripPackageJson
+);
+
+/**
  * This is the normal dev build
  * to run.
  */
