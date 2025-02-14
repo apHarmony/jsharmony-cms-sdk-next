@@ -75,7 +75,7 @@ ___
 
 • **editorScriptPath**: ``null`` \| `string`
 
-If page was opened from a CMS Editor in config.cms_server_urls, the HTML script to launch the Editor
+If page was opened from a CMS Editor in config.cmsServerUrls, the HTML script to launch the Editor
 
 ___
 
@@ -261,7 +261,7 @@ ___
 
 ### getPath
 
-▸ **getPath**(`contentPath`, `pathname`): `string`
+▸ **getPath**(`contentUrl`, `pathname`): `string`
 
 getPath - Transform a page url into cms content file path
 
@@ -269,7 +269,7 @@ getPath - Transform a page url into cms content file path
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `contentPath` | `string` | CMS content export folder |
+| `contentUrl` | `string` | CMS content export folder |
 | `pathname` | `string` | Root relative path being requested |
 
 #### Returns
@@ -329,7 +329,7 @@ ___
 
 ### resolvePath
 
-▸ **resolvePath**(`contentPath`, `pathname`, `defaultDocument`): `string`[]
+▸ **resolvePath**(`contentUrl`, `pathname`, `defaultDocument`): `string`[]
 
 resolvePath - Convert URL to CMS Content Paths
 
@@ -337,7 +337,7 @@ resolvePath - Convert URL to CMS Content Paths
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `contentPath` | `string` | CMS content export folder |
+| `contentUrl` | `string` | CMS content URL |
 | `pathname` | `string` | Root relative path being requested |
 | `defaultDocument` | `string` | default document if not in url, e.g. 'index.html' |
 

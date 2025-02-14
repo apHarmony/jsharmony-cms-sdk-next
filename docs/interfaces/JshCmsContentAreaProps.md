@@ -23,4 +23,4 @@ ___
 
 ### jshCmsPage
 
-• **jshCmsPage**: [`JshCmsPage`](../classes/JshCmsPage.md)
+• `Optional` **jshCmsPage**: [`JshCmsPage`](../classes/JshCmsPage.md)

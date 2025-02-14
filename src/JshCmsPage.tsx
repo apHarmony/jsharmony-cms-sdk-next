@@ -31,7 +31,7 @@ import { useJshCms } from './JshCmsContext';
 export interface JshCmsPage {
   content: { [areaId: string]: string };
   css: string;
-  /** If page was opened from a CMS Editor in config.cms_server_urls, the HTML script to launch the Editor */
+  /** If page was opened from a CMS Editor in config.cmsServerUrls, the HTML script to launch the Editor */
   editorScriptPath: string | null;
   footer: string;
   header: string;
@@ -52,6 +52,7 @@ export interface JshCmsPage {
   /** Whether the page was Not Found (page data will return empty) */
   notFound: boolean;
 }
+/* eslint-enable @typescript-eslint/naming-convention */
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 /**
@@ -64,6 +65,7 @@ export class JshCmsPage implements JshCmsPage {
    * @param pageTemplateId - page template id for newly created pages
    * @public
    */
+  /* eslint-disable @typescript-eslint/naming-convention */
   public static getEmptyPage(pageTemplateId: string): JshCmsPage {
     return {
       content: {
@@ -87,6 +89,7 @@ export class JshCmsPage implements JshCmsPage {
       title: ''
     };
   }
+  /* eslint-enable @typescript-eslint/naming-convention */
 
   /**
    * getNotFoundPage - An empty JshCmsPage object, with the notFound flag set
@@ -113,14 +116,14 @@ export class JshCmsPage implements JshCmsPage {
       const jshCmsPage = JshCmsPage.getEmptyPage(pageTemplateId);
       const jshcmsUrl: string = (params.jshcms_url || '').toString();
       jshCmsPage.isInEditor = true;
-      jshCmsPage.editorScriptPath = JshCmsPage.getEditorScriptPath(jshcmsUrl, config.cms_server_urls);
+      jshCmsPage.editorScriptPath = JshCmsPage.getEditorScriptPath(jshcmsUrl, config.cmsServerUrls);
       return jshCmsPage;
     }
     if (!pathname) {pathname = '';}
     if (Array.isArray(pathname)) {pathname = pathname.join('/');}
-    const variations = JshCmsPage.resolvePath(config.content_path, pathname, config.default_document);
+    const variations = JshCmsPage.resolvePath(config.contentUrl, pathname, config.defaultDocument);
     for (const variation of variations) {
-      const url = new URL(variation, config.content_url);
+      const url = new URL(variation, config.contentUrl);
       const pageResponse = await fetchCached(url); // next fetch is cached, so this can be shared between metadata and content
       if (pageResponse.ok) {
         if (!pageResponse.json) {return JshCmsPage.getEmptyPage(pageTemplateId);}
@@ -217,17 +220,20 @@ export class JshCmsPage implements JshCmsPage {
    * @public
    */
   public static async getStandalonePage(pathname: string[] | string | undefined, params: { [key: string]: string[] | string | undefined }, config: JshCmsPageRequest) {
+    if (!pathname) {pathname = '';}
+    if (Array.isArray(pathname)) {pathname = pathname.join('/');}
+    pathname = new URL(pathname, 'https://localhost').pathname;
     return await JshCmsPage.getPage(pathname, params, config);
   }
 
   /**
    * getPath - Transform a page url into cms content file path
-   * @param contentPath - CMS content export folder
+   * @param contentUrl - CMS content export folder
    * @param pathname - Root relative path being requested
    * @returns normalized path
    * @public
    */
-  public static getPath(contentPath: string, pathname: string): string {
+  public static getPath(contentUrl: string, pathname: string): string {
     if (!pathname) {pathname = '';}
     //If URL is not absolute, add starting "/"
     if (pathname.indexOf('//')<0){
@@ -237,7 +243,7 @@ export class JshCmsPage implements JshCmsPage {
       }
     }
 
-    return joinUrlPath(contentPath, pathname);
+    return joinUrlPath(contentUrl, pathname);
   }
 
   /**
@@ -263,14 +269,14 @@ export class JshCmsPage implements JshCmsPage {
 
   /**
    * resolvePath - Convert URL to CMS Content Paths
-   * @param contentPath - CMS content export folder
+   * @param contentUrl - CMS content URL
    * @param pathname - Root relative path being requested
    * @param defaultDocument - default document if not in url, e.g. 'index.html'
    * @returns list of paths to try
    * @public
    */
-  public static resolvePath(contentPath: string, pathname: string, defaultDocument: string): string[] {
-    pathname = JshCmsPage.getPath(contentPath, pathname);
+  public static resolvePath(contentUrl: string, pathname: string, defaultDocument: string): string[] {
+    pathname = JshCmsPage.getPath(contentUrl, pathname);
 
     return JshCmsPage.getPathVariations(pathname, defaultDocument);
   }
@@ -280,16 +286,13 @@ export class JshCmsPage implements JshCmsPage {
  * @public
  */
 export interface JshCmsPageRequest {
-  /** CMS content export folder */
-  content_path: string,
-  /** CMS content origin server */
-  content_url: string | undefined,
+  /** CMS content URL */
+  contentUrl: string,
   /** default document if not in url, e.g. 'index.html' */
-  default_document: string,
+  defaultDocument: string,
   /** valid CMS server URLs */
-  cms_server_urls: string[],
+  cmsServerUrls: string[],
 }
-/* eslint-enable @typescript-eslint/naming-convention */
 
 /**
  * @public
@@ -310,7 +313,7 @@ export interface JshCmsElementProps {
  * @public
  */
 export interface JshCmsContentAreaProps {
-  jshCmsPage: JshCmsPage;
+  jshCmsPage?: JshCmsPage;
   ['cms-content']: string;
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
@@ -336,7 +339,7 @@ export function JshCmsContentArea(props: JshCmsContentAreaProps) {
   const { jshCmsPage: contextJshCmsPage } = useJshCms();
   const { children, jshCmsPage: propJshCmsPage, ['cms-content']: content = 'body', ...otherProps } = props;
   const jshCmsPage = propJshCmsPage ?? contextJshCmsPage;
-  if (jshCmsPage.content[content]) {
+  if (jshCmsPage?.content[content]) {
     return <div {...otherProps} cms-content-editor={`page.content.${content}`} dangerouslySetInnerHTML={{ __html: jshCmsPage.content[content] }}></div>;
   } else {
     return <div {...otherProps} cms-content-editor={`page.content.${content}`} >{children}</div>;

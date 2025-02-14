@@ -52,21 +52,18 @@ export interface JshCmsRoute {
 /**
  * @public
  */
-/* eslint-disable @typescript-eslint/naming-convention */
 export interface JshCmsConfig {
-  /** File path to published CMS content files */
-  content_path?: string,
-  /** Url of the server hosting content_path, usually the same server. */
-  content_url?: string,
-  /** Path to redirect listing JSON file (relative to content_path) */
-  redirect_listing_path?: string | null,
+  /** URL to published CMS content files */
+  contentUrl?: string,
+  /** Path to redirect listing JSON file (relative to contentUrl) */
+  redirectListingPath?: string | null,
   /** Default Directory Document (e.g. index.html) */
-  default_document?: string,
+  defaultDocument?: string,
   /** The CMS Server URLs that will be enabled for Page Editing (set to '*' to enable any remote CMS)
    * - Used by jshCmsPage.editorScriptPath, and the getEditorScriptPath function
-   * - NOT used by jsHarmonyCmsEditor.js - the launcher instead uses access_keys for validating the remote CMS
+   * - NOT used by jsHarmonyCmsEditor.js - the launcher instead uses accessKeys for validating the remote CMS
    */
-  cms_server_urls: string[],
+  cmsServerUrls: string[],
 }
 
 /**
@@ -74,24 +71,21 @@ export interface JshCmsConfig {
  */
 export class JshCmsRouter {
 
-  /** File path to published CMS content files */
-  public content_path: string = '';
-  /** Url of the server hosting content_path, usually the same server. */
-  public content_url: string = '';
-  /** Path to redirect listing JSON file (relative to content_path) */
-  public redirect_listing_path: string | null = null;
+  /** URL to published CMS content files */
+  public contentUrl: string = '';
+  /** Path to redirect listing JSON file (relative to contentUrl) */
+  public redirectListingPath: string | null = null;
   /** The CMS Server URLs that will be enabled for Page Editing (set to '*' to enable any remote CMS)
    * - Used by jshCmsPage.editorScriptPath, and the getEditorScriptPath function
-   * - NOT used by jsHarmonyCmsEditor.js - the launcher instead uses access_keys for validating the remote CMS
+   * - NOT used by jsHarmonyCmsEditor.js - the launcher instead uses accessKeys for validating the remote CMS
    */
-  public cms_server_urls: string[] = [];
+  public cmsServerUrls: string[] = [];
   /** Default Directory Document (e.g. index.html) */
-  public default_document: string = 'index.html';
-  /* eslint-enable @typescript-eslint/naming-convention */
+  public defaultDocument: string = 'index.html';
 
   public constructor(config: JshCmsConfig){
     extend(this, config);
-    if (!this.content_path) {throw new Error('CMS Configuration Error - content_path parameter is required');}
+    if (!this.contentUrl) {throw new Error('CMS Configuration Error - contentUrl parameter is required');}
   }
 
   //================
@@ -100,10 +94,10 @@ export class JshCmsRouter {
 
   /** getRedirectListingPath - Get the configured path for the redirect listing file */
   public getRedirectListingPath(): string | undefined {
-    const redirectListingPath = this.redirect_listing_path;
+    const redirectListingPath = this.redirectListingPath;
     if (!redirectListingPath) {return;}
     if (redirectListingPath.charAt(0) !== '/'){
-      if (this.content_path.endsWith('/')) {return this.content_path + redirectListingPath;} else {return `${this.content_path  }/${  redirectListingPath}`;}
+      if (this.contentUrl.endsWith('/')) {return this.contentUrl + redirectListingPath;} else {return `${this.contentUrl  }/${  redirectListingPath}`;}
     }
     return redirectListingPath;
   }
@@ -127,7 +121,7 @@ export class JshCmsRouter {
   public async getRedirect(request: NextRequest): Promise<JshCmsRoute | undefined> {
     const redirectListingPath = this.getRedirectListingPath();
     if (!redirectListingPath) {return;}
-    return await this.getRedirectBase(request.nextUrl.pathname, this.content_url, redirectListingPath);
+    return await this.getRedirectBase(request.nextUrl.pathname, this.contentUrl, redirectListingPath);
   }
 
   /**
@@ -147,7 +141,7 @@ export class JshCmsRouter {
    * @param pathname - target path
    */
   public async hasPage(pathname: string): Promise<boolean> {
-    return await this.hasPageBase(pathname, this.content_url, this.content_path, this.default_document);
+    return await this.hasPageBase(pathname, this.contentUrl, this.defaultDocument);
   }
 
   /**
@@ -193,10 +187,10 @@ export class JshCmsRouter {
    * @param params - Request url parameters
    * @returns Page Object, with filled properties: isInEditor, editorScriptPath, notFound
    */
-  public async serve(pathname: string, params: { [key: string]: string[] | string | undefined }): Promise<GetServerSidePropsResult<{ jshCmsPage: JshCmsPage }>> {
+  public async serve(pathname: string[] | string | undefined, params: { [key: string]: string[] | string | undefined }): Promise<GetServerSidePropsResult<{ jshCmsPage: JshCmsPage }>> {
     const redirectListingPath = this.getRedirectListingPath();
     if (redirectListingPath){
-      const route = await this.getRedirectBase(pathname, this.content_url, redirectListingPath);
+      const route = await this.getRedirectBase(pathname, this.contentUrl, redirectListingPath);
       if (route) {
         switch (route.http_code) {
           case '301': return { redirect: { destination: route.url, permanent: true } };
@@ -286,11 +280,14 @@ export class JshCmsRouter {
   /**
    * getRedirectBase - Looks up matching redirect, if any.
    * @param pathname - target path
-   * @param contentUrl - Origin for exported CMS redirects
+   * @param contentUrl - URL to content files
    * @param redirectListingPath - Path to exported CMS redirects
    * @returns path and code if found
    */
-  private async getRedirectBase(pathname: string, contentUrl: string, redirectListingPath: string): Promise<JshCmsRoute | undefined> {
+  private async getRedirectBase(pathname: string[] | string | undefined, contentUrl: string, redirectListingPath: string): Promise<JshCmsRoute | undefined> {
+    if (!pathname) {pathname = '';}
+    if (Array.isArray(pathname)) {pathname = pathname.join('/');}
+
     const redirectData: JshCmsRedirect[] = await this.loadRedirectData(redirectListingPath, contentUrl);
 
     if (redirectData && redirectData.length > 0) {
@@ -303,12 +300,11 @@ export class JshCmsRouter {
   /**
    * hasPageBase - Check if a page object file exists to decide if a route is available.
    * @param pathname - target url path name
-   * @param contentUrl - Origin url for CMS files
-   * @param contentPath - Path to CMS output folder
+   * @param contentUrl - URL to CMS content files
    * @param defaultDocument - default document if not in url, e.g. 'index.html'
    */
-  private async hasPageBase(pathname: string, contentUrl: string, contentPath: string, defaultDocument: string): Promise<boolean> {
-    const variations = JshCmsPage.resolvePath(contentPath, pathname, defaultDocument);
+  private async hasPageBase(pathname: string, contentUrl: string, defaultDocument: string): Promise<boolean> {
+    const variations = JshCmsPage.resolvePath(contentUrl, pathname, defaultDocument);
 
     for (const path of variations) {
       const url = new URL(path, contentUrl);

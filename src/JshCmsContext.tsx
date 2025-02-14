@@ -38,9 +38,9 @@ export interface JshCmsContextData {
  * @public
  */
 export interface JshCmsProviderProps {
-  jshCmsConfig: JshCmsConfig;
+  jshCmsConfig?: JshCmsConfig;
   jshCmsPage?: JshCmsPage;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 /**

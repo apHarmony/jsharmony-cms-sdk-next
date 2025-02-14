@@ -29,7 +29,7 @@ import Head from 'next/head';
 export interface JshCmsProps {
   jshCmsConfig: JshCmsConfig;
   jshCmsPage?: JshCmsPage;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 /**

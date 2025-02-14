@@ -14,7 +14,7 @@
 
 ### children
 
-• **children**: `ReactNode`
+• `Optional` **children**: `ReactNode`
 
 ___
 

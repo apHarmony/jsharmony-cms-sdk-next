@@ -14,13 +14,13 @@
 
 ### children
 
-• **children**: `ReactNode`
+• `Optional` **children**: `ReactNode`
 
 ___
 
 ### jshCmsConfig
 
-• **jshCmsConfig**: [`JshCmsConfig`](JshCmsConfig.md)
+• `Optional` **jshCmsConfig**: [`JshCmsConfig`](JshCmsConfig.md)
 
 ___
 

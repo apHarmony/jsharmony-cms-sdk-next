@@ -10,11 +10,10 @@
 
 ### Properties
 
-- [cms\_server\_urls](JshCmsRouter.md#cms_server_urls)
-- [content\_path](JshCmsRouter.md#content_path)
-- [content\_url](JshCmsRouter.md#content_url)
-- [default\_document](JshCmsRouter.md#default_document)
-- [redirect\_listing\_path](JshCmsRouter.md#redirect_listing_path)
+- [cmsServerUrls](JshCmsRouter.md#cmsserverurls)
+- [contentUrl](JshCmsRouter.md#contenturl)
+- [defaultDocument](JshCmsRouter.md#defaultdocument)
+- [redirectListingPath](JshCmsRouter.md#redirectlistingpath)
 
 ### Methods
 
@@ -49,45 +48,37 @@
 
 ## Properties
 
-### cms\_server\_urls
+### cmsServerUrls
 
-• **cms\_server\_urls**: `string`[] = `[]`
+• **cmsServerUrls**: `string`[] = `[]`
 
 The CMS Server URLs that will be enabled for Page Editing (set to '*' to enable any remote CMS)
 - Used by jshCmsPage.editorScriptPath, and the getEditorScriptPath function
-- NOT used by jsHarmonyCmsEditor.js - the launcher instead uses access_keys for validating the remote CMS
+- NOT used by jsHarmonyCmsEditor.js - the launcher instead uses accessKeys for validating the remote CMS
 
 ___
 
-### content\_path
+### contentUrl
 
-• **content\_path**: `string` = `''`
+• **contentUrl**: `string` = `''`
 
-File path to published CMS content files
-
-___
-
-### content\_url
-
-• **content\_url**: `string` = `''`
-
-Url of the server hosting content_path, usually the same server.
+URL to published CMS content files
 
 ___
 
-### default\_document
+### defaultDocument
 
-• **default\_document**: `string` = `'index.html'`
+• **defaultDocument**: `string` = `'index.html'`
 
 Default Directory Document (e.g. index.html)
 
 ___
 
-### redirect\_listing\_path
+### redirectListingPath
 
-• **redirect\_listing\_path**: ``null`` \| `string` = `null`
+• **redirectListingPath**: ``null`` \| `string` = `null`
 
-Path to redirect listing JSON file (relative to content_path)
+Path to redirect listing JSON file (relative to contentUrl)
 
 ## Methods
 
@@ -279,7 +270,7 @@ serve [Main Entry Point] - Serves CMS content for a target URL
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `pathname` | `string` | Root relative path being requested |
+| `pathname` | `undefined` \| `string` \| `string`[] | Root relative path being requested |
 | `params` | `Object` | Request url parameters |
 
 #### Returns

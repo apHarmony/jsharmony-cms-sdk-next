@@ -6,50 +6,41 @@
 
 ### Properties
 
-- [cms\_server\_urls](JshCmsConfig.md#cms_server_urls)
-- [content\_path](JshCmsConfig.md#content_path)
-- [content\_url](JshCmsConfig.md#content_url)
-- [default\_document](JshCmsConfig.md#default_document)
-- [redirect\_listing\_path](JshCmsConfig.md#redirect_listing_path)
+- [cmsServerUrls](JshCmsConfig.md#cmsserverurls)
+- [contentUrl](JshCmsConfig.md#contenturl)
+- [defaultDocument](JshCmsConfig.md#defaultdocument)
+- [redirectListingPath](JshCmsConfig.md#redirectlistingpath)
 
 ## Properties
 
-### cms\_server\_urls
+### cmsServerUrls
 
-• **cms\_server\_urls**: `string`[]
+• **cmsServerUrls**: `string`[]
 
 The CMS Server URLs that will be enabled for Page Editing (set to '*' to enable any remote CMS)
 - Used by jshCmsPage.editorScriptPath, and the getEditorScriptPath function
-- NOT used by jsHarmonyCmsEditor.js - the launcher instead uses access_keys for validating the remote CMS
+- NOT used by jsHarmonyCmsEditor.js - the launcher instead uses accessKeys for validating the remote CMS
 
 ___
 
-### content\_path
+### contentUrl
 
-• `Optional` **content\_path**: `string`
+• `Optional` **contentUrl**: `string`
 
-File path to published CMS content files
-
-___
-
-### content\_url
-
-• `Optional` **content\_url**: `string`
-
-Url of the server hosting content_path, usually the same server.
+URL to published CMS content files
 
 ___
 
-### default\_document
+### defaultDocument
 
-• `Optional` **default\_document**: `string`
+• `Optional` **defaultDocument**: `string`
 
 Default Directory Document (e.g. index.html)
 
 ___
 
-### redirect\_listing\_path
+### redirectListingPath
 
-• `Optional` **redirect\_listing\_path**: ``null`` \| `string`
+• `Optional` **redirectListingPath**: ``null`` \| `string`
 
-Path to redirect listing JSON file (relative to content_path)
+Path to redirect listing JSON file (relative to contentUrl)
