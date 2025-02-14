@@ -23,7 +23,7 @@ SYSTEM - Hard-coded content element content.
 
 #### Index signature
 
-▪ [content_area_name: `string`]: `string`
+▪ [content_area_name: `string`]: `string` \| \{ `title?`: `string`  }
 
 ___
 

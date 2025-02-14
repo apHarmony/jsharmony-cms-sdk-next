@@ -506,7 +506,11 @@ export interface JshCmsPageConfigDefinition {
     dock?: 'bottom' | 'top_offset' | 'top';
   };
   /** SYSTEM - Hard-coded content element content. */
-  content?: { [content_area_name: string]: string };
+  content?: {
+    [content_area_name: string]: string | {
+      title?: string;
+    };
+  };
 }
 /* eslint-enable @typescript-eslint/naming-convention */
 
