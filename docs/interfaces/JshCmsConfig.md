@@ -19,7 +19,7 @@
 • **cms\_server\_urls**: `string`[]
 
 The CMS Server URLs that will be enabled for Page Editing (set to '*' to enable any remote CMS)
-- Used by page.editorScriptPath, and the getCmsEditorScriptPath function
+- Used by jshCmsPage.editorScriptPath, and the getEditorScriptPath function
 - NOT used by jsHarmonyCmsEditor.js - the launcher instead uses access_keys for validating the remote CMS
 
 ___

@@ -12,26 +12,61 @@ jsharmony-cms-sdk-next
 ### Interfaces
 
 - [JshCmsConfig](interfaces/JshCmsConfig.md)
+- [JshCmsContentAreaProps](interfaces/JshCmsContentAreaProps.md)
+- [JshCmsContextData](interfaces/JshCmsContextData.md)
+- [JshCmsElementProps](interfaces/JshCmsElementProps.md)
+- [JshCmsMetadataProps](interfaces/JshCmsMetadataProps.md)
 - [JshCmsPageConfigDefinition](interfaces/JshCmsPageConfigDefinition.md)
 - [JshCmsPageConfigProps](interfaces/JshCmsPageConfigProps.md)
 - [JshCmsPageRequest](interfaces/JshCmsPageRequest.md)
 - [JshCmsProps](interfaces/JshCmsProps.md)
-- [JshCmsPropsWithPage](interfaces/JshCmsPropsWithPage.md)
-- [JshCmsPropsWithPageAndContent](interfaces/JshCmsPropsWithPageAndContent.md)
+- [JshCmsProviderProps](interfaces/JshCmsProviderProps.md)
 - [JshCmsRedirect](interfaces/JshCmsRedirect.md)
 - [JshCmsRoute](interfaces/JshCmsRoute.md)
 
 ### Functions
 
+- [JshCms](README.md#jshcms)
 - [JshCmsContentArea](README.md#jshcmscontentarea)
 - [JshCmsEditor](README.md#jshcmseditor)
 - [JshCmsFooter](README.md#jshcmsfooter)
 - [JshCmsHead](README.md#jshcmshead)
 - [JshCmsPageConfig](README.md#jshcmspageconfig)
+- [JshCmsProvider](README.md#jshcmsprovider)
 - [JshCmsScript](README.md#jshcmsscript)
 - [JshCmsStyle](README.md#jshcmsstyle)
+- [useJshCms](README.md#usejshcms)
 
 ## Functions
+
+### JshCms
+
+▸ **JshCms**(`props`): `Element`
+
+JshCms - renders head, editor, script, style, footer tags, and a container for JshCmsContentArea tags
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `props` | [`JshCmsProps`](interfaces/JshCmsProps.md) |
+
+#### Returns
+
+`Element`
+
+**`Remarks`**
+
+**`Example`**
+
+```
+<JshCms jshCmsPage={jshCmsPage} jshCmsConfig={JshCmsConfig}>
+  <h1 cms-title="true">{jshCmsPage.title||'Title'}</h1>
+  <JshCmsContentArea cms-content="body">Page Content</JshCmsContentArea>
+</JshCms>
+```
+
+___
 
 ### JshCmsContentArea
 
@@ -43,7 +78,7 @@ JshCmsContentArea - render simple content area.
 
 | Name | Type |
 | :------ | :------ |
-| `props` | [`JshCmsPropsWithPageAndContent`](interfaces/JshCmsPropsWithPageAndContent.md) |
+| `props` | [`JshCmsContentAreaProps`](interfaces/JshCmsContentAreaProps.md) |
 
 #### Returns
 
@@ -56,7 +91,7 @@ Simple React function component for including editable content area. This produc
 **`Example`**
 
 ```
-<JshCmsContentArea cms-content="body" page={cmsPage}>
+<JshCmsContentArea cms-content="body" jshCmsPage={jshCmsPage}>
   Optional Default Body Content
 </JshCmsContentArea>
 ```
@@ -65,7 +100,7 @@ ___
 
 ### JshCmsEditor
 
-▸ **JshCmsEditor**(`props`): `undefined` \| `Element`
+▸ **JshCmsEditor**(`props`): `Element`
 
 JshCmsEditor - render editor support script when page is loaded in the CMS editor.
 
@@ -73,11 +108,11 @@ JshCmsEditor - render editor support script when page is loaded in the CMS edito
 
 | Name | Type |
 | :------ | :------ |
-| `props` | [`JshCmsPropsWithPage`](interfaces/JshCmsPropsWithPage.md) |
+| `props` | [`JshCmsElementProps`](interfaces/JshCmsElementProps.md) |
 
 #### Returns
 
-`undefined` \| `Element`
+`Element`
 
 **`Remarks`**
 
@@ -87,14 +122,14 @@ Note: CMS was designed to support additional head tags. Next.js takes full contr
 **`Example`**
 
 ```
-<JshCmsEditor page={cmsPage} />
+<JshCmsEditor jshCmsPage={jshCmsPage} />
 ```
 
 ___
 
 ### JshCmsFooter
 
-▸ **JshCmsFooter**(`props`): `undefined` \| `Element`
+▸ **JshCmsFooter**(`props`): `Element`
 
 JshCsFooter - render additional footer tags (if any).
 
@@ -102,11 +137,11 @@ JshCsFooter - render additional footer tags (if any).
 
 | Name | Type |
 | :------ | :------ |
-| `props` | [`JshCmsPropsWithPage`](interfaces/JshCmsPropsWithPage.md) |
+| `props` | [`JshCmsElementProps`](interfaces/JshCmsElementProps.md) |
 
 #### Returns
 
-`undefined` \| `Element`
+`Element`
 
 **`Remarks`**
 
@@ -115,14 +150,14 @@ Simple React function component for conditionally including tags in pages. These
 **`Example`**
 
 ```
-<JshCmsFooter page={cmsPage} />
+<JshCmsFooter jshCmsPage={jshCmsPage} />
 ```
 
 ___
 
 ### JshCmsHead
 
-▸ **JshCmsHead**(`props`): `undefined` \| `Element`
+▸ **JshCmsHead**(`props`): `Element`
 
 JshCmsHead - render additional head tags (if any). Note that this feature in particular is questionable with the Next.js head management, and since raw text must have a container, it is rendered in a div.
 
@@ -130,11 +165,11 @@ JshCmsHead - render additional head tags (if any). Note that this feature in par
 
 | Name | Type |
 | :------ | :------ |
-| `props` | [`JshCmsPropsWithPage`](interfaces/JshCmsPropsWithPage.md) |
+| `props` | [`JshCmsElementProps`](interfaces/JshCmsElementProps.md) |
 
 #### Returns
 
-`undefined` \| `Element`
+`Element`
 
 **`Remarks`**
 
@@ -144,7 +179,7 @@ Note: CMS was designed to support additional head tags. Next.js takes full contr
 **`Example`**
 
 ```
-<JshCmsHead page={cmsPage} />
+<JshCmsHead jshCmsPage={jshCmsPage} />
 ```
 
 ___
@@ -183,9 +218,25 @@ Note: CMS was designed to support additional head tags. Next.js takes full contr
 
 ___
 
+### JshCmsProvider
+
+▸ **JshCmsProvider**(`props`): `Element`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `props` | [`JshCmsProviderProps`](interfaces/JshCmsProviderProps.md) |
+
+#### Returns
+
+`Element`
+
+___
+
 ### JshCmsScript
 
-▸ **JshCmsScript**(`props`): `undefined` \| `Element`
+▸ **JshCmsScript**(`props`): `Element`
 
 JshCmsScript - render additional javascript (if any) as a script tag
 
@@ -193,11 +244,11 @@ JshCmsScript - render additional javascript (if any) as a script tag
 
 | Name | Type |
 | :------ | :------ |
-| `props` | [`JshCmsPropsWithPage`](interfaces/JshCmsPropsWithPage.md) |
+| `props` | [`JshCmsElementProps`](interfaces/JshCmsElementProps.md) |
 
 #### Returns
 
-`undefined` \| `Element`
+`Element`
 
 **`Remarks`**
 
@@ -207,14 +258,14 @@ Note: CMS was designed to support additional head tags. Next.js takes full contr
 **`Example`**
 
 ```
-<JshCmsScript page={cmsPage} />
+<JshCmsScript jshCmsPage={jshCmsPage} />
 ```
 
 ___
 
 ### JshCmsStyle
 
-▸ **JshCmsStyle**(`props`): `undefined` \| `Element`
+▸ **JshCmsStyle**(`props`): `Element`
 
 JshCmsStyle - render additional css (if any) as a style tag
 
@@ -222,11 +273,11 @@ JshCmsStyle - render additional css (if any) as a style tag
 
 | Name | Type |
 | :------ | :------ |
-| `props` | [`JshCmsPropsWithPage`](interfaces/JshCmsPropsWithPage.md) |
+| `props` | [`JshCmsElementProps`](interfaces/JshCmsElementProps.md) |
 
 #### Returns
 
-`undefined` \| `Element`
+`Element`
 
 **`Remarks`**
 
@@ -236,5 +287,15 @@ Note: CMS was designed to support additional head tags. Next.js takes full contr
 **`Example`**
 
 ```
-<JshCmsStyle page={cmsPage} />
+<JshCmsStyle jshCmsPage={jshCmsPage} />
 ```
+
+___
+
+### useJshCms
+
+▸ **useJshCms**(): [`JshCmsContextData`](interfaces/JshCmsContextData.md)
+
+#### Returns
+
+[`JshCmsContextData`](interfaces/JshCmsContextData.md)

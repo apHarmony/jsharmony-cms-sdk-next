@@ -1,6 +1,25 @@
+/*!
+Copyright 2025 apHarmony
+
+This file is part of jsHarmony.
+
+jsHarmony is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+jsHarmony is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this package.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 import { NextResponse, NextRequest } from 'next/server'
 import { Metadata, ResolvingMetadata, GetServerSidePropsResult } from 'next'
-import { JshCmsPage, JshCmsProps } from './JshCmsPage';
+import { JshCmsPage, JshCmsMetadataProps } from './JshCmsPage';
 import { fetchCached } from './JshCmsFetch';
 
 /**
@@ -44,7 +63,7 @@ export interface JshCmsConfig {
   /** Default Directory Document (e.g. index.html) */
   default_document?: string,
   /** The CMS Server URLs that will be enabled for Page Editing (set to '*' to enable any remote CMS)
-   * - Used by page.editorScriptPath, and the getEditorScriptPath function
+   * - Used by jshCmsPage.editorScriptPath, and the getEditorScriptPath function
    * - NOT used by jsHarmonyCmsEditor.js - the launcher instead uses access_keys for validating the remote CMS
    */
   cms_server_urls: string[],
@@ -62,7 +81,7 @@ export class JshCmsRouter {
   /** Path to redirect listing JSON file (relative to content_path) */
   public redirect_listing_path: string | null = null;
   /** The CMS Server URLs that will be enabled for Page Editing (set to '*' to enable any remote CMS)
-   * - Used by page.editorScriptPath, and the getEditorScriptPath function
+   * - Used by jshCmsPage.editorScriptPath, and the getEditorScriptPath function
    * - NOT used by jsHarmonyCmsEditor.js - the launcher instead uses access_keys for validating the remote CMS
    */
   public cms_server_urls: string[] = [];
@@ -160,7 +179,7 @@ export class JshCmsRouter {
    * If you application has additional metadata needs, you may wish to copy the base function into your generateMetadata function.
    * {@link https://nextjs.org/docs/app/api-reference/functions/generate-metadata}
    */
-  public async getMetadata({ params }: JshCmsProps, parent: ResolvingMetadata): Promise<Metadata> {
+  public async getMetadata({ params }: JshCmsMetadataProps, parent: ResolvingMetadata): Promise<Metadata> {
     return await JshCmsPage.getMetadata({ params }, parent, this);
   }
 
@@ -174,7 +193,7 @@ export class JshCmsRouter {
    * @param params - Request url parameters
    * @returns Page Object, with filled properties: isInEditor, editorScriptPath, notFound
    */
-  public async serve(pathname: string, params: { [key: string]: string[] | string | undefined }): Promise<GetServerSidePropsResult<{ page: JshCmsPage }>> {
+  public async serve(pathname: string, params: { [key: string]: string[] | string | undefined }): Promise<GetServerSidePropsResult<{ jshCmsPage: JshCmsPage }>> {
     const redirectListingPath = this.getRedirectListingPath();
     if (redirectListingPath){
       const route = await this.getRedirectBase(pathname, this.content_url, redirectListingPath);
@@ -187,9 +206,9 @@ export class JshCmsRouter {
         }
       }
     }
-    const cmsPage = await JshCmsPage.getPage(pathname, params, this);
-    if (!cmsPage.isInEditor && cmsPage.notFound) { return { notFound: true }; }
-    return { props: { page: cmsPage } };
+    const jshCmsPage = await JshCmsPage.getPage(pathname, params, this);
+    if (!jshCmsPage.isInEditor && jshCmsPage.notFound) { return { notFound: true }; }
+    return { props: { jshCmsPage: jshCmsPage } };
   }
 
   /**

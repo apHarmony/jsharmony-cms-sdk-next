@@ -54,7 +54,7 @@
 • **cms\_server\_urls**: `string`[] = `[]`
 
 The CMS Server URLs that will be enabled for Page Editing (set to '*' to enable any remote CMS)
-- Used by page.editorScriptPath, and the getCmsEditorScriptPath function
+- Used by jshCmsPage.editorScriptPath, and the getEditorScriptPath function
 - NOT used by jsHarmonyCmsEditor.js - the launcher instead uses access_keys for validating the remote CMS
 
 ___
@@ -119,7 +119,7 @@ getMetadata - provides a basic version of a Next.js metadata function that provi
 
 | Name | Type |
 | :------ | :------ |
-| `«destructured»` | [`JshCmsProps`](../interfaces/JshCmsProps.md) |
+| `«destructured»` | [`JshCmsMetadataProps`](../interfaces/JshCmsMetadataProps.md) |
 | `parent` | `ResolvingMetadata` |
 
 #### Returns
@@ -271,7 +271,7 @@ ___
 
 ### serve
 
-▸ **serve**(`pathname`, `params`): `Promise`\<`GetServerSidePropsResult`\<\{ `page`: [`JshCmsPage`](JshCmsPage.md)  }\>\>
+▸ **serve**(`pathname`, `params`): `Promise`\<`GetServerSidePropsResult`\<\{ `jshCmsPage`: [`JshCmsPage`](JshCmsPage.md)  }\>\>
 
 serve [Main Entry Point] - Serves CMS content for a target URL
 
@@ -284,7 +284,7 @@ serve [Main Entry Point] - Serves CMS content for a target URL
 
 #### Returns
 
-`Promise`\<`GetServerSidePropsResult`\<\{ `page`: [`JshCmsPage`](JshCmsPage.md)  }\>\>
+`Promise`\<`GetServerSidePropsResult`\<\{ `jshCmsPage`: [`JshCmsPage`](JshCmsPage.md)  }\>\>
 
 Page Object, with filled properties: isInEditor, editorScriptPath, notFound
 

@@ -206,7 +206,7 @@ getMetadata - provides a basic version of a Next.js metadata function that provi
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `props` | [`JshCmsProps`](../interfaces/JshCmsProps.md) | params from the incoming request |
+| `props` | [`JshCmsMetadataProps`](../interfaces/JshCmsMetadataProps.md) | params from the incoming request |
 | `parent` | `ResolvingMetadata` | metadata from previous functions |
 | `config` | [`JshCmsPageRequest`](../interfaces/JshCmsPageRequest.md) | CMS configuration parameters |
 

@@ -1,7 +1,7 @@
 # Building (Development)
 
 1. run `npm install`
-2. run `npm run build:watch`
+2. run `npm run build:dev`
 
 # Building (Production)
 

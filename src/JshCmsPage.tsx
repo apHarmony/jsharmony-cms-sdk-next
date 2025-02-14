@@ -1,8 +1,27 @@
+/*!
+Copyright 2025 apHarmony
+
+This file is part of jsHarmony.
+
+jsHarmony is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+jsHarmony is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this package.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 import { Metadata, ResolvingMetadata } from 'next'
 import Script from 'next/script'
 import React from 'react'
 import { fetchCached } from './JshCmsFetch';
+import { useJshCms } from './JshCmsContext';
 
 /**
  * @public
@@ -91,11 +110,11 @@ export class JshCmsPage implements JshCmsPage {
     let pageTemplateId = '';
     if (typeof params?.page_template_id === 'string') {pageTemplateId = (params?.page_template_id);}
     if (params?.jshcms_token && params?.jshcms_url) {
-      const cmsPage = JshCmsPage.getEmptyPage(pageTemplateId);
+      const jshCmsPage = JshCmsPage.getEmptyPage(pageTemplateId);
       const jshcmsUrl: string = (params.jshcms_url || '').toString();
-      cmsPage.isInEditor = true;
-      cmsPage.editorScriptPath = JshCmsPage.getEditorScriptPath(jshcmsUrl, config.cms_server_urls);
-      return cmsPage;
+      jshCmsPage.isInEditor = true;
+      jshCmsPage.editorScriptPath = JshCmsPage.getEditorScriptPath(jshcmsUrl, config.cms_server_urls);
+      return jshCmsPage;
     }
     if (!pathname) {pathname = '';}
     if (Array.isArray(pathname)) {pathname = pathname.join('/');}
@@ -129,16 +148,16 @@ export class JshCmsPage implements JshCmsPage {
    * @public
    */
   public static async getMetadata(
-    { params }: JshCmsProps, // eslint-disable-line @typescript-eslint/no-unused-vars
+    { params }: JshCmsMetadataProps, // eslint-disable-line @typescript-eslint/no-unused-vars
     parent: ResolvingMetadata,
     config: JshCmsPageRequest
   ): Promise<Metadata> {
-    const cmsPage = await JshCmsPage.getPage(params.url, params, config);
+    const jshCmsPage = await JshCmsPage.getPage(params.url, params, config);
     const pageMeta: Metadata = {};
-    if (cmsPage.seo.title) {pageMeta.title = cmsPage.seo.title;}
-    if (cmsPage.seo.keywords) {pageMeta.keywords = cmsPage.seo.keywords;}
-    if (cmsPage.seo.metadesc) {pageMeta.description = cmsPage.seo.metadesc;}
-    if (cmsPage.seo.canonical_url) {pageMeta.alternates = { canonical: cmsPage.seo.canonical_url };}
+    if (jshCmsPage.seo.title) {pageMeta.title = jshCmsPage.seo.title;}
+    if (jshCmsPage.seo.keywords) {pageMeta.keywords = jshCmsPage.seo.keywords;}
+    if (jshCmsPage.seo.metadesc) {pageMeta.description = jshCmsPage.seo.metadesc;}
+    if (jshCmsPage.seo.canonical_url) {pageMeta.alternates = { canonical: jshCmsPage.seo.canonical_url };}
     return pageMeta;
   }
 
@@ -275,23 +294,23 @@ export interface JshCmsPageRequest {
 /**
  * @public
  */
-export interface JshCmsProps {
+export interface JshCmsMetadataProps {
   params: { [key: string]: string[] | string | undefined }
 }
 
 /**
  * @public
  */
-export interface JshCmsPropsWithPage {
-  page: JshCmsPage;
+export interface JshCmsElementProps {
+  jshCmsPage?: JshCmsPage;
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
  * @public
  */
-export interface JshCmsPropsWithPageAndContent {
-  page: JshCmsPage;
+export interface JshCmsContentAreaProps {
+  jshCmsPage: JshCmsPage;
   ['cms-content']: string;
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
@@ -307,16 +326,18 @@ export interface JshCmsPropsWithPageAndContent {
  *
  * @example
  * ```
- * <JshCmsContentArea cms-content="body" page={cmsPage}>
+ * <JshCmsContentArea cms-content="body" jshCmsPage={jshCmsPage}>
  *   Optional Default Body Content
  * </JshCmsContentArea>
  * ```
  * @public
  */
-export function JshCmsContentArea(props: JshCmsPropsWithPageAndContent) {
-  const { children, page, ['cms-content']: content = 'body', ...otherProps } = props;
-  if (page.content[content]) {
-    return <div {...otherProps} cms-content-editor={`page.content.${content}`} dangerouslySetInnerHTML={{ __html: page.content[content] }}></div>;
+export function JshCmsContentArea(props: JshCmsContentAreaProps) {
+  const { jshCmsPage: contextJshCmsPage } = useJshCms();
+  const { children, jshCmsPage: propJshCmsPage, ['cms-content']: content = 'body', ...otherProps } = props;
+  const jshCmsPage = propJshCmsPage ?? contextJshCmsPage;
+  if (jshCmsPage.content[content]) {
+    return <div {...otherProps} cms-content-editor={`page.content.${content}`} dangerouslySetInnerHTML={{ __html: jshCmsPage.content[content] }}></div>;
   } else {
     return <div {...otherProps} cms-content-editor={`page.content.${content}`} >{children}</div>;
   }
@@ -330,17 +351,19 @@ export function JshCmsContentArea(props: JshCmsPropsWithPageAndContent) {
  *
  * @example
  * ```
- * <JshCmsStyle page={cmsPage} />
+ * <JshCmsStyle jshCmsPage={jshCmsPage} />
  * ```
  * @public
  */
-export function JshCmsStyle(props: JshCmsPropsWithPage) {
-  if (props?.page.css) {
-    const { page, ...otherProps } = props;
+export function JshCmsStyle(props: JshCmsElementProps) {
+  const { jshCmsPage: contextJshCmsPage } = useJshCms();
+  const { jshCmsPage: propJshCmsPage, ...otherProps } = props;
+  const jshCmsPage = propJshCmsPage ?? contextJshCmsPage;
+  if (jshCmsPage?.css) {
     return (
-      <style {...otherProps} type='text/css' dangerouslySetInnerHTML={{ __html: page.css || '' }}></style>
+      <style {...otherProps} type='text/css' dangerouslySetInnerHTML={{ __html: jshCmsPage.css || '' }}></style>
     );
-  } else {return undefined;}
+  } else {return <></>;}
 }
 
 /**
@@ -351,17 +374,19 @@ export function JshCmsStyle(props: JshCmsPropsWithPage) {
  *
  * @example
  * ```
- * <JshCmsScript page={cmsPage} />
+ * <JshCmsScript jshCmsPage={jshCmsPage} />
  * ```
  * @public
  */
-export function JshCmsScript(props: JshCmsPropsWithPage) {
-  if (props?.page.js) {
-    const { page, ...otherProps } = props;
+export function JshCmsScript(props: JshCmsElementProps) {
+  const { jshCmsPage: contextJshCmsPage } = useJshCms();
+  const { jshCmsPage: propJshCmsPage, ...otherProps } = props;
+  const jshCmsPage = propJshCmsPage ?? contextJshCmsPage;
+  if (jshCmsPage?.js) {
     return (
-      <Script {...otherProps} type='text/javascript' dangerouslySetInnerHTML={{ __html: page.js || '' }}></Script>
+      <Script {...otherProps} type='text/javascript' dangerouslySetInnerHTML={{ __html: jshCmsPage.js || '' }}></Script>
     );
-  } else {return undefined;}
+  } else {return <></>;}
 }
 
 /**
@@ -372,17 +397,19 @@ export function JshCmsScript(props: JshCmsPropsWithPage) {
  *
  * @example
  * ```
- * <JshCmsHead page={cmsPage} />
+ * <JshCmsHead jshCmsPage={jshCmsPage} />
  * ```
  * @public
  */
-export function JshCmsHead(props: JshCmsPropsWithPage) {
-  if (props?.page.header) {
-    const { page, ...otherProps } = props;
+export function JshCmsHead(props: JshCmsElementProps) {
+  const { jshCmsPage: contextJshCmsPage } = useJshCms();
+  const { jshCmsPage: propJshCmsPage, ...otherProps } = props;
+  const jshCmsPage = propJshCmsPage ?? contextJshCmsPage;
+  if (jshCmsPage?.header) {
     return (
-      <div {...otherProps} dangerouslySetInnerHTML={{ __html: page.header || '' }}></div>
+      <div {...otherProps} dangerouslySetInnerHTML={{ __html: jshCmsPage.header || '' }}></div>
     );
-  } else {return undefined;}
+  } else {return <></>;}
 }
 
 /**
@@ -392,17 +419,19 @@ export function JshCmsHead(props: JshCmsPropsWithPage) {
  *
  * @example
  * ```
- * <JshCmsFooter page={cmsPage} />
+ * <JshCmsFooter jshCmsPage={jshCmsPage} />
  * ```
  * @public
  */
-export function JshCmsFooter(props: JshCmsPropsWithPage) {
-  if (props?.page.footer) {
-    const { page, ...otherProps } = props;
+export function JshCmsFooter(props: JshCmsElementProps) {
+  const { jshCmsPage: contextJshCmsPage } = useJshCms();
+  const { jshCmsPage: propJshCmsPage, ...otherProps } = props;
+  const jshCmsPage = propJshCmsPage ?? contextJshCmsPage;
+  if (jshCmsPage?.footer) {
     return (
-      <div {...otherProps} dangerouslySetInnerHTML={{ __html: page.footer || '' }}></div>
+      <div {...otherProps} dangerouslySetInnerHTML={{ __html: jshCmsPage.footer || '' }}></div>
     );
-  } else {return undefined;}
+  } else {return <></>;}
 }
 
 /**
@@ -430,6 +459,7 @@ export function JshCmsPageConfig(props: JshCmsPageConfigProps) {
     );
   } else {return undefined;}
 }
+
 
 /* eslint-disable @typescript-eslint/naming-convention */
 /**
@@ -492,15 +522,17 @@ export interface JshCmsPageConfigProps {
  *
  * @example
  * ```
- * <JshCmsEditor page={cmsPage} />
+ * <JshCmsEditor jshCmsPage={jshCmsPage} />
  * ```
  * @public
  */
-export function JshCmsEditor(props: JshCmsPropsWithPage) {
-  if (props?.page.editorScriptPath) {
-    const { page, ...otherProps } = props;
-    return <Script {...otherProps} className='removeOnPublish' strategy='beforeInteractive' src={page.editorScriptPath||undefined}></Script>
-  } else {return undefined;}
+export function JshCmsEditor(props: JshCmsElementProps) {
+  const { jshCmsPage: contextJshCmsPage } = useJshCms();
+  const { jshCmsPage: propJshCmsPage, ...otherProps } = props;
+  const jshCmsPage = propJshCmsPage ?? contextJshCmsPage;
+  if (jshCmsPage?.editorScriptPath) {
+    return <Script {...otherProps} className='removeOnPublish' strategy='beforeInteractive' src={jshCmsPage.editorScriptPath||undefined}></Script>
+  } else {return <></>;}
 }
 
 //==================

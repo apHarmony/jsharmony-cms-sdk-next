@@ -1,5 +1,5 @@
 /*!
-Copyright 2022 apHarmony
+Copyright 2025 apHarmony
 
 This file is part of jsHarmony.
 

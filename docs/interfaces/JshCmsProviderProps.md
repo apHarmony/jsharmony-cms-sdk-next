@@ -1,14 +1,14 @@
-[jsharmony-cms-sdk-next](../README.md) / JshCmsProps
+[jsharmony-cms-sdk-next](../README.md) / JshCmsProviderProps
 
-# Interface: JshCmsProps
+# Interface: JshCmsProviderProps
 
 ## Table of contents
 
 ### Properties
 
-- [children](JshCmsProps.md#children)
-- [jshCmsConfig](JshCmsProps.md#jshcmsconfig)
-- [jshCmsPage](JshCmsProps.md#jshcmspage)
+- [children](JshCmsProviderProps.md#children)
+- [jshCmsConfig](JshCmsProviderProps.md#jshcmsconfig)
+- [jshCmsPage](JshCmsProviderProps.md#jshcmspage)
 
 ## Properties
 

@@ -62,6 +62,7 @@ function getCommonConfig(tsConfigPath, output) {
       'next/script',
       'next/server',
       'next/cache',
+      'next/head',
       'react',
       'react-dom',
     ],
@@ -98,6 +99,7 @@ function getUmdConfig() {
       'next/script': 'Script',
       'next/server': 'server',
       'next/cache': 'cache',
+      'next/head': 'head',
     }
   });
 }
