@@ -67,8 +67,6 @@ function getCommonConfig(tsConfigPath, output) {
       'react-dom',
     ],
     plugins: [
-      // rollupCommonjs is required for
-      // 'jsharmony-cms-sdk-clientjs' module
       rollupCommonjs(),
       rollupTypescript({
         tsconfig: tsConfigPath
