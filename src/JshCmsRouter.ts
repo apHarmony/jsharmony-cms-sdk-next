@@ -64,6 +64,8 @@ export interface JshCmsConfig {
    * - NOT used by jsHarmonyCmsEditor.js - the launcher instead uses accessKeys for validating the remote CMS
    */
   cmsServerUrls: string[],
+  /** Cache duration (seconds) */
+  cacheDuration: number,
 }
 
 /**
@@ -82,6 +84,8 @@ export class JshCmsRouter {
   public cmsServerUrls: string[] = [];
   /** Default Directory Document (e.g. index.html) */
   public defaultDocument: string = 'index.html';
+  /** Cache duration (seconds) */
+  public cacheDuration: number = 60;
 
   public constructor(config: JshCmsConfig){
     extend(this, config);
@@ -91,6 +95,17 @@ export class JshCmsRouter {
   //================
   //Public Functions
   //================
+
+  /** getConfig - Get the current config */
+  public getConfig(): JshCmsConfig {
+    return {
+      cacheDuration: this.cacheDuration,
+      cmsServerUrls: this.cmsServerUrls,
+      contentUrl: this.contentUrl,
+      defaultDocument: this.defaultDocument,
+      redirectListingPath: this.redirectListingPath
+    };
+  }
 
   /** getRedirectListingPath - Get the configured path for the redirect listing file */
   public getRedirectListingPath(): string | undefined {
@@ -179,6 +194,17 @@ export class JshCmsRouter {
 
 
   /**
+   *getPage - Returns a Page object for a specified path
+   * @param pathname - Root relative path being requested
+   * @param params - Request url parameters
+   * @returns Page Object, with filled properties: isInEditor, editorScriptPath, notFound
+   */
+  public async getPage(pathname: string[] | string | undefined, params: { [key: string]: string[] | string | undefined }): Promise<JshCmsPage> {
+    return await JshCmsPage.getPage(pathname, params, this);
+  }
+
+
+  /**
    *serve [Main Entry Point] - Serves CMS content for a target URL
    * @remarks
    * if page is opened from CMS Editor or Not Found, an empty Page Object will be returned
@@ -214,9 +240,11 @@ export class JshCmsRouter {
   public async loadRedirectData(redirectListingPath: string, origin: string): Promise<JshCmsRedirect[]> {
     const url = new URL(redirectListingPath, origin);
 
-    const response = await fetchCached(url);
+    const response = await fetchCached(url, this.cacheDuration);
     if (response.ok) {
-      return response.json as JshCmsRedirect[] || [];
+      if (response.json){
+        return response.json as JshCmsRedirect[] || [];
+      }
     }
 
     return [];
@@ -308,8 +336,8 @@ export class JshCmsRouter {
 
     for (const path of variations) {
       const url = new URL(path, contentUrl);
-      const pageResponse = await fetchCached(url);
-      if (pageResponse.ok) {return true;}
+      const pageResponse = await fetchCached(url, this.cacheDuration);
+      if (pageResponse.ok) { return true; }
     }
 
     return false;

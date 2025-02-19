@@ -10,6 +10,7 @@
 
 ### Properties
 
+- [cacheDuration](JshCmsRouter.md#cacheduration)
 - [cmsServerUrls](JshCmsRouter.md#cmsserverurls)
 - [contentUrl](JshCmsRouter.md#contenturl)
 - [defaultDocument](JshCmsRouter.md#defaultdocument)
@@ -17,8 +18,10 @@
 
 ### Methods
 
+- [getConfig](JshCmsRouter.md#getconfig)
 - [getEmptyPage](JshCmsRouter.md#getemptypage)
 - [getMetadata](JshCmsRouter.md#getmetadata)
+- [getPage](JshCmsRouter.md#getpage)
 - [getRedirect](JshCmsRouter.md#getredirect)
 - [getRedirectData](JshCmsRouter.md#getredirectdata)
 - [getRedirectListingPath](JshCmsRouter.md#getredirectlistingpath)
@@ -47,6 +50,14 @@
 [`JshCmsRouter`](JshCmsRouter.md)
 
 ## Properties
+
+### cacheDuration
+
+• **cacheDuration**: `number` = `60`
+
+Cache duration (seconds)
+
+___
 
 ### cmsServerUrls
 
@@ -81,6 +92,18 @@ ___
 Path to redirect listing JSON file (relative to contentUrl)
 
 ## Methods
+
+### getConfig
+
+▸ **getConfig**(): [`JshCmsConfig`](../interfaces/JshCmsConfig.md)
+
+getConfig - Get the current config
+
+#### Returns
+
+[`JshCmsConfig`](../interfaces/JshCmsConfig.md)
+
+___
 
 ### getEmptyPage
 
@@ -121,6 +144,27 @@ getMetadata - provides a basic version of a Next.js metadata function that provi
 
 If you application has additional metadata needs, you may wish to copy the base function into your generateMetadata function.
 [https://nextjs.org/docs/app/api-reference/functions/generate-metadata](https://nextjs.org/docs/app/api-reference/functions/generate-metadata)
+
+___
+
+### getPage
+
+▸ **getPage**(`pathname`, `params`): `Promise`\<[`JshCmsPage`](JshCmsPage.md)\>
+
+getPage - Returns a Page object for a specified path
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `pathname` | `undefined` \| `string` \| `string`[] | Root relative path being requested |
+| `params` | `Object` | Request url parameters |
+
+#### Returns
+
+`Promise`\<[`JshCmsPage`](JshCmsPage.md)\>
+
+Page Object, with filled properties: isInEditor, editorScriptPath, notFound
 
 ___
 

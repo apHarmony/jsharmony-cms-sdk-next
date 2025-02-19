@@ -6,11 +6,20 @@
 
 ### Properties
 
+- [cacheDuration](JshCmsPageRequest.md#cacheduration)
 - [cmsServerUrls](JshCmsPageRequest.md#cmsserverurls)
 - [contentUrl](JshCmsPageRequest.md#contenturl)
 - [defaultDocument](JshCmsPageRequest.md#defaultdocument)
 
 ## Properties
+
+### cacheDuration
+
+• **cacheDuration**: `number`
+
+cache duration in seconds
+
+___
 
 ### cmsServerUrls
 

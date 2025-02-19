@@ -124,7 +124,7 @@ export class JshCmsPage implements JshCmsPage {
     const variations = JshCmsPage.resolvePath(config.contentUrl, pathname, config.defaultDocument);
     for (const variation of variations) {
       const url = new URL(variation, config.contentUrl);
-      const pageResponse = await fetchCached(url); // next fetch is cached, so this can be shared between metadata and content
+      const pageResponse = await fetchCached(url, config.cacheDuration); // next fetch is cached, so this can be shared between metadata and content
       if (pageResponse.ok) {
         if (!pageResponse.json) {return JshCmsPage.getEmptyPage(pageTemplateId);}
         try {
@@ -135,7 +135,7 @@ export class JshCmsPage implements JshCmsPage {
       }
     }
 
-    return JshCmsPage.getEmptyPage(pageTemplateId);
+    return JshCmsPage.getNotFoundPage(pageTemplateId);
   }
 
   /**
@@ -292,6 +292,8 @@ export interface JshCmsPageRequest {
   defaultDocument: string,
   /** valid CMS server URLs */
   cmsServerUrls: string[],
+  /** cache duration in seconds */
+  cacheDuration: number,
 }
 
 /**

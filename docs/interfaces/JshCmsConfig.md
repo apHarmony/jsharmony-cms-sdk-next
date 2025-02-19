@@ -6,12 +6,21 @@
 
 ### Properties
 
+- [cacheDuration](JshCmsConfig.md#cacheduration)
 - [cmsServerUrls](JshCmsConfig.md#cmsserverurls)
 - [contentUrl](JshCmsConfig.md#contenturl)
 - [defaultDocument](JshCmsConfig.md#defaultdocument)
 - [redirectListingPath](JshCmsConfig.md#redirectlistingpath)
 
 ## Properties
+
+### cacheDuration
+
+• **cacheDuration**: `number`
+
+Cache duration (seconds)
+
+___
 
 ### cmsServerUrls
 

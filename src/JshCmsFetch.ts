@@ -26,23 +26,23 @@ export interface FetchResponse {
   json: any, // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-const cacheFunc = unstable_cache(
-  async(url: string) => {
-    const res = await fetch(url);
-    const rslt = {
-      ok: res.ok
-    } as FetchResponse;
-    try {
-      rslt.json = await res.json(); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-    } catch {
-      /* Do nothing */
-    }
-    return rslt;
-  },
-  ['jsharmony-cms-url-cache'],
-  { revalidate: 60 }
-);
+export async function fetchCached(reqUrl: URL, cacheDuration: number){
+  const cacheFunc = unstable_cache(
+    async(url: string) => {
+      const res = await fetch(url);
+      const rslt = {
+        ok: res.ok
+      } as FetchResponse;
+      try {
+        rslt.json = await res.json(); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+      } catch {
+        rslt.ok = false;
+      }
+      return rslt;
+    },
+    ['jsharmony-cms-url-cache'],
+    { revalidate: cacheDuration }
+  );
 
-export async function fetchCached(url: URL){
-  return await cacheFunc(url.toString());
+  return await cacheFunc(reqUrl.toString());
 }
