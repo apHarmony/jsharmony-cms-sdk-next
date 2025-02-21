@@ -63,9 +63,9 @@ export interface JshCmsConfig {
    * - Used by jshCmsPage.editorScriptPath, and the getEditorScriptPath function
    * - NOT used by jsHarmonyCmsEditor.js - the launcher instead uses accessKeys for validating the remote CMS
    */
-  cmsServerUrls: string[],
+  cmsServerUrls?: string[],
   /** Cache duration (seconds) */
-  cacheDuration: number,
+  cacheDuration?: number,
 }
 
 /**

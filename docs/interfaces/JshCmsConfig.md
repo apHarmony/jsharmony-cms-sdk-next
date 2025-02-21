@@ -16,7 +16,7 @@
 
 ### cacheDuration
 
-• **cacheDuration**: `number`
+• `Optional` **cacheDuration**: `number`
 
 Cache duration (seconds)
 
@@ -24,7 +24,7 @@ ___
 
 ### cmsServerUrls
 
-• **cmsServerUrls**: `string`[]
+• `Optional` **cmsServerUrls**: `string`[]
 
 The CMS Server URLs that will be enabled for Page Editing (set to '*' to enable any remote CMS)
 - Used by jshCmsPage.editorScriptPath, and the getEditorScriptPath function
