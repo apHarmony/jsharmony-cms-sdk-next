@@ -11,6 +11,7 @@ jsharmony-cms-sdk-next
 
 ### Interfaces
 
+- [JshCmsComponent](interfaces/JshCmsComponent.md)
 - [JshCmsConfig](interfaces/JshCmsConfig.md)
 - [JshCmsContentAreaProps](interfaces/JshCmsContentAreaProps.md)
 - [JshCmsContextData](interfaces/JshCmsContextData.md)
@@ -72,7 +73,7 @@ ___
 
 ▸ **JshCmsContentArea**(`props`): `Element`
 
-JshCmsContentArea - render simple content area.
+JshCmsContentArea - Render content area.
 
 #### Parameters
 
@@ -86,7 +87,7 @@ JshCmsContentArea - render simple content area.
 
 **`Remarks`**
 
-Simple React function component for including editable content area. This produces a div, but it can be trivially replaced with custom code.
+React function component for rendering content area content and associated portals for child component rendering.
 
 **`Example`**
 

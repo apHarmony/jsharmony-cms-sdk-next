@@ -93,6 +93,7 @@ function getUmdConfig() {
     globals: {
       history: 'HistoryLibrary',
       react: 'React',
+      'react-dom': 'ReactDOM',
       'next/navigation': 'navigation',
       'next/script': 'Script',
       'next/server': 'server',

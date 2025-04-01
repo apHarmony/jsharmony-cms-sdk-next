@@ -19,7 +19,7 @@ along with this package.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Metadata, ResolvingMetadata } from 'next'
 import Script from 'next/script'
-import React from 'react'
+import React, { ReactElement } from 'react'
 import { fetchCached } from './JshCmsFetch';
 import { useJshCms } from './JshCmsContext';
 
@@ -299,6 +299,15 @@ export interface JshCmsPageRequest {
 /**
  * @public
  */
+export interface JshCmsComponent {
+  portalContainer: Element;
+  element: ReactElement;
+  key: string;
+}
+
+/**
+ * @public
+ */
 export interface JshCmsMetadataProps {
   params: { [key: string]: string[] | string | undefined }
 }
@@ -311,42 +320,9 @@ export interface JshCmsElementProps {
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-/**
- * @public
- */
-export interface JshCmsContentAreaProps {
-  jshCmsPage?: JshCmsPage;
-  ['cms-content']: string;
-  [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-}
-
 //================
 //Tag Helpers
 //================
-
-/**
- * JshCmsContentArea - render simple content area.
- * @remarks
- * Simple React function component for including editable content area. This produces a div, but it can be trivially replaced with custom code.
- *
- * @example
- * ```
- * <JshCmsContentArea cms-content="body" jshCmsPage={jshCmsPage}>
- *   Optional Default Body Content
- * </JshCmsContentArea>
- * ```
- * @public
- */
-export function JshCmsContentArea(props: JshCmsContentAreaProps) {
-  const { jshCmsPage: contextJshCmsPage } = useJshCms();
-  const { children, jshCmsPage: propJshCmsPage, ['cms-content']: content = 'body', ...otherProps } = props;
-  const jshCmsPage = propJshCmsPage ?? contextJshCmsPage;
-  if (jshCmsPage?.content[content]) {
-    return <div {...otherProps} cms-content-editor={`page.content.${content}`} dangerouslySetInnerHTML={{ __html: jshCmsPage.content[content] }}></div>;
-  } else {
-    return <div {...otherProps} cms-content-editor={`page.content.${content}`} >{children}</div>;
-  }
-}
 
 /**
  * JshCmsStyle - render additional css (if any) as a style tag
