@@ -22,6 +22,16 @@ import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
 import { JshCmsPage, JshCmsComponent } from './JshCmsPage';
 import { createPortal } from 'react-dom';
 
+declare global {
+  interface Window {
+    jsHarmonyCMSInstance?: {
+      componentManager: {
+        onNotifyUpdate: ((props: { element: HTMLDivElement, componentId: string }) => void)[];
+      };
+    };
+  }
+}
+
 /**
  * @internal
  */
@@ -39,20 +49,20 @@ export const JshCmsContentAreaPortals: React.VFC<Props> = ({
   contentAreaName,
   componentExtractor
 }) => {
+
   if (!componentExtractor) {return <></>;}
 
   const [components, setComponents] = useState<JshCmsComponent[]>([]);
   const isInit = useRef(false);
 
   useLayoutEffect(() => {
-    const cmsContentArea = document.querySelector(`[cms-content-editor="page.content.${contentAreaName}"]`);
-    if (!cmsContentArea || !jshCmsPage || !jshCmsPage.isInEditor) {return undefined;}
+    if (!window.jsHarmonyCMSInstance || !jshCmsPage || !jshCmsPage.isInEditor) {return undefined;}
 
     const curComponents = components.slice(0);
 
     //Editor mode
-    const updateEventHandler = (event: Event) => {
-      const componentId: string = ((event as CustomEvent)?.detail as { componentId: string })?.componentId ?? '';
+    const updateEventHandler = (props: { element: HTMLDivElement, componentId: string }) => {
+      const componentId = props.componentId;
       if (!componentId) {return;}
       for (let i=0; i<curComponents.length; i++){
         const portalContainer = curComponents[i]?.portalContainer;
@@ -60,15 +70,19 @@ export const JshCmsContentAreaPortals: React.VFC<Props> = ({
           curComponents.splice(i--, 1);
         }
       }
-      const subComponents = componentExtractor(cmsContentArea.querySelector(`[data-component-id="${componentId}"]`) as HTMLDivElement);
+      const componentContainer = props.element;
+      const subComponents = componentExtractor(componentContainer);
       subComponents.forEach(function(subComponent) {
         curComponents.push(subComponent);
       });
       setComponents(curComponents);
     };
-    cmsContentArea.addEventListener('jsHarmonyCmsUpdate', updateEventHandler);
+
+    window.jsHarmonyCMSInstance.componentManager.onNotifyUpdate.push(updateEventHandler);
     return () => {
-      cmsContentArea.removeEventListener('jsHarmonyCmsUpdate', updateEventHandler);
+      if (!window.jsHarmonyCMSInstance) {return;}
+      const eventIdx = window.jsHarmonyCMSInstance.componentManager.onNotifyUpdate.indexOf(updateEventHandler);
+      if (eventIdx >= 0) {window.jsHarmonyCMSInstance.componentManager.onNotifyUpdate.splice(eventIdx, 1);}
     };
   }, [components]);
 
