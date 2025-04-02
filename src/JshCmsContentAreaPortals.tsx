@@ -18,7 +18,7 @@ along with this package.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
 import { JshCmsPage, JshCmsComponent } from './JshCmsPage';
 import { createPortal } from 'react-dom';
 
@@ -42,35 +42,41 @@ export const JshCmsContentAreaPortals: React.VFC<Props> = ({
   if (!componentExtractor) {return <></>;}
 
   const [components, setComponents] = useState<JshCmsComponent[]>([]);
+  const isInit = useRef(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const cmsContentArea = document.querySelector(`[cms-content-editor="page.content.${contentAreaName}"]`);
     if (!cmsContentArea || !jshCmsPage || !jshCmsPage.isInEditor) {return undefined;}
+
+    const curComponents = components.slice(0);
 
     //Editor mode
     const updateEventHandler = (event: Event) => {
       const componentId: string = ((event as CustomEvent)?.detail as { componentId: string })?.componentId ?? '';
       if (!componentId) {return;}
-      const newComponents = components.slice(0);
-      for (let i=0; i<newComponents.length; i++){
-        const portalContainer = newComponents[i]?.portalContainer;
-        if (portalContainer && !document.contains(portalContainer)) {newComponents.splice(i--, 1);}
+      for (let i=0; i<curComponents.length; i++){
+        const portalContainer = curComponents[i]?.portalContainer;
+        if (portalContainer && !document.contains(portalContainer)) {
+          curComponents.splice(i--, 1);
+        }
       }
       const subComponents = componentExtractor(cmsContentArea.querySelector(`[data-component-id="${componentId}"]`) as HTMLDivElement);
       subComponents.forEach(function(subComponent) {
-        newComponents.push(subComponent);
+        curComponents.push(subComponent);
       });
-      setComponents(newComponents);
+      setComponents(curComponents);
     };
     cmsContentArea.addEventListener('jsHarmonyCmsUpdate', updateEventHandler);
     return () => {
       cmsContentArea.removeEventListener('jsHarmonyCmsUpdate', updateEventHandler);
     };
-  });
+  }, [components]);
 
   //Publish mode
   useEffect(() => {
     if (!jshCmsPage?.isInEditor) {
+      if (isInit.current) {return;}
+      isInit.current = true;
       const newComponents = componentExtractor(document.querySelector(`[cms-content-editor="page.content.${contentAreaName}"]`) as HTMLDivElement);
       setComponents(newComponents);
     }
