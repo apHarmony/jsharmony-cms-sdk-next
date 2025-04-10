@@ -19,7 +19,7 @@ along with this package.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Metadata, ResolvingMetadata } from 'next'
 import Script from 'next/script'
-import React, { ReactElement } from 'react'
+import React from 'react'
 import { fetchCached } from './JshCmsFetch';
 import { useJshCms } from './JshCmsContext';
 
@@ -294,15 +294,6 @@ export interface JshCmsPageRequest {
   cmsServerUrls: string[],
   /** cache duration in seconds */
   cacheDuration: number,
-}
-
-/**
- * @public
- */
-export interface JshCmsComponent {
-  portalContainer: Element;
-  element: ReactElement;
-  key: string;
 }
 
 /**

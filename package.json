@@ -1,6 +1,6 @@
 {
   "name": "jsharmony-cms-sdk-next",
-  "version": "1.2.9",
+  "version": "1.2.11",
   "description": "jsHarmony CMS SDK for Next.js",
   "main": "dist/bundles/jsHarmonyCmsSdkNext.umd.js",
   "module": "dist/fesm2015/jsHarmonyCmsSdkNext.js",

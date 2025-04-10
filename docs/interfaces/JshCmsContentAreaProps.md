@@ -11,7 +11,7 @@
 ### Properties
 
 - [cms-content](JshCmsContentAreaProps.md#cms-content)
-- [componentExtractor](JshCmsContentAreaProps.md#componentextractor)
+- [jshCmsContentComponents](JshCmsContentAreaProps.md#jshcmscontentcomponents)
 - [jshCmsPage](JshCmsContentAreaProps.md#jshcmspage)
 
 ## Properties
@@ -22,23 +22,9 @@
 
 ___
 
-### componentExtractor
+### jshCmsContentComponents
 
-• `Optional` **componentExtractor**: (`componentContainer`: `HTMLDivElement`) => [`JshCmsComponent`](JshCmsComponent.md)[]
-
-#### Type declaration
-
-▸ (`componentContainer`): [`JshCmsComponent`](JshCmsComponent.md)[]
-
-##### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `componentContainer` | `HTMLDivElement` |
-
-##### Returns
-
-[`JshCmsComponent`](JshCmsComponent.md)[]
+• `Optional` **jshCmsContentComponents**: [`JshCmsContentComponent`](../classes/JshCmsContentComponent.md)\<`any`\>[]
 
 ___
 

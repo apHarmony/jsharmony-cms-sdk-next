@@ -19,14 +19,15 @@ along with this package.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
-import { JshCmsPage, JshCmsComponent } from './JshCmsPage';
+import { JshCmsPage } from './JshCmsPage';
+import { JshCmsContentComponent, JshCmsContentComponentInstance } from './JshCmsContentComponent';
 import { createPortal } from 'react-dom';
 
 declare global {
   interface Window {
     jsHarmonyCMSInstance?: {
       componentManager: {
-        onNotifyUpdate: ((props: { element: HTMLDivElement, componentId: string }) => void)[];
+        onNotifyUpdate: ((props: { element: HTMLDivElement, componentId: string, contentAreaName: string }) => void)[];
       };
     };
   }
@@ -35,10 +36,53 @@ declare global {
 /**
  * @internal
  */
+function extractComponents(contentAreaElement: HTMLDivElement, jshCmsContentComponents: JshCmsContentComponent<any>[]): JshCmsContentComponentInstance[] { // eslint-disable-line @typescript-eslint/no-explicit-any
+	if (!jshCmsContentComponents?.length) {
+		return [];
+	}
+  const componentInstances: JshCmsContentComponentInstance[] = [];
+  jshCmsContentComponents.forEach(function(jshCmsContentComponent){
+    const componentConfig = jshCmsContentComponent.jshCmsComponentConfig;
+    if (!componentConfig) {return;}
+    const componentName = (jshCmsContentComponent.name||jshCmsContentComponent.displayName||'');
+    const componentContainers = contentAreaElement?.querySelectorAll(componentConfig.selector);
+    componentContainers.forEach(function(componentContainer, index) {
+      if (componentConfig.onBeforeRender){
+        componentConfig.onBeforeRender(componentContainer);
+      }
+      const componentKey = `${componentName}_${  index  }_${  Math.random().toString().substring(0, 15)  }-${  Math.random().toString().substring(0, 15)  }-${  Math.random().toString().substring(0, 15)  }-${ Math.random().toString().substring(0, 15)}`;
+      if (componentConfig.render){
+        const renderResult = componentConfig.render(componentContainer);
+        if (renderResult){
+          componentInstances.push({
+            container: renderResult.container ?? componentContainer,
+            element: renderResult.element,
+            key: renderResult.key ?? componentKey
+          });
+        }
+      } else {
+        componentContainer.innerHTML = '';
+        componentInstances.push({
+          container: componentContainer,
+          element: React.createElement(jshCmsContentComponent),
+          key: componentKey
+        });
+      }
+      if (componentConfig.onRender){
+        componentConfig.onRender(componentContainer);
+      }
+    });
+  });
+  return componentInstances;
+}
+
+/**
+ * @internal
+ */
 export type Props = {
   jshCmsPage?: JshCmsPage;
   contentAreaName: string;
-  componentExtractor?: (componentContainer: HTMLDivElement) => JshCmsComponent[];
+  jshCmsContentComponents?: JshCmsContentComponent<any>[]; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
 /**
@@ -47,31 +91,38 @@ export type Props = {
 export const JshCmsContentAreaPortals: React.VFC<Props> = ({
   jshCmsPage,
   contentAreaName,
-  componentExtractor
+  jshCmsContentComponents
 }) => {
 
-  if (!componentExtractor) {return <></>;}
+  if (!jshCmsContentComponents?.length) {return <></>;}
 
-  const [components, setComponents] = useState<JshCmsComponent[]>([]);
+  const [components, setComponents] = useState<JshCmsContentComponentInstance[]>([]);
   const isInit = useRef(false);
 
   useLayoutEffect(() => {
-    if (!window.jsHarmonyCMSInstance || !jshCmsPage || !jshCmsPage.isInEditor) {return undefined;}
+    if (!isInit.current || !window.jsHarmonyCMSInstance || !jshCmsPage || !jshCmsPage.isInEditor) {return undefined;}
 
     const curComponents = components.slice(0);
 
     //Editor mode
-    const updateEventHandler = (props: { element: HTMLDivElement, componentId: string }) => {
+    const updateEventHandler = (props: { element: HTMLDivElement, componentId: string, contentAreaName: string }) => {
       const componentId = props.componentId;
       if (!componentId) {return;}
+
+      //Return if component is not in the content area
+      if (props.contentAreaName !== contentAreaName) {return;}
+
+      //Prune removed components
       for (let i=0; i<curComponents.length; i++){
-        const portalContainer = curComponents[i]?.portalContainer;
+        const portalContainer = curComponents[i]?.container;
         if (portalContainer && !document.contains(portalContainer)) {
           curComponents.splice(i--, 1);
         }
       }
-      const componentContainer = props.element;
-      const subComponents = componentExtractor(componentContainer);
+
+      //Extract and initialize components
+      const contentAreaElement = props.element;
+      const subComponents = extractComponents(contentAreaElement, jshCmsContentComponents);
       subComponents.forEach(function(subComponent) {
         curComponents.push(subComponent);
       });
@@ -88,10 +139,10 @@ export const JshCmsContentAreaPortals: React.VFC<Props> = ({
 
   //Publish mode
   useEffect(() => {
+    if (isInit.current) {return;}
+    isInit.current = true;
     if (!jshCmsPage?.isInEditor) {
-      if (isInit.current) {return;}
-      isInit.current = true;
-      const newComponents = componentExtractor(document.querySelector(`[cms-content-editor="page.content.${contentAreaName}"]`) as HTMLDivElement);
+      const newComponents = extractComponents(document.querySelector(`[cms-content-editor="page.content.${contentAreaName}"]`) as HTMLDivElement, jshCmsContentComponents);
       setComponents(newComponents);
     }
   }, []);
@@ -101,7 +152,7 @@ export const JshCmsContentAreaPortals: React.VFC<Props> = ({
       {components.map(function(component) {
         return createPortal(
           component.element,
-          component.portalContainer,
+          component.container,
           component.key
         );
       })}

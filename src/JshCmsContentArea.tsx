@@ -19,7 +19,8 @@ along with this package.  If not, see <http://www.gnu.org/licenses/>.
 
 import React from 'react'
 import { useJshCms } from './JshCmsContext';
-import { JshCmsPage, JshCmsComponent } from './JshCmsPage';
+import { JshCmsPage } from './JshCmsPage';
+import { JshCmsContentComponent } from './JshCmsContentComponent';
 import { JshCmsContentAreaBody } from './JshCmsContentAreaBody';
 import { JshCmsContentAreaPortals } from './JshCmsContentAreaPortals';
 
@@ -29,8 +30,8 @@ import { JshCmsContentAreaPortals } from './JshCmsContentAreaPortals';
  */
 export interface JshCmsContentAreaProps {
   jshCmsPage?: JshCmsPage;
+  jshCmsContentComponents?: JshCmsContentComponent<any>[]; // eslint-disable-line @typescript-eslint/no-explicit-any
   ['cms-content']: string;
-  componentExtractor?: (componentContainer: HTMLDivElement) => JshCmsComponent[];
   [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
@@ -49,20 +50,20 @@ export interface JshCmsContentAreaProps {
  */
 export function JshCmsContentArea(props: JshCmsContentAreaProps) {
   const { jshCmsPage: contextJshCmsPage } = useJshCms();
-  const { children, jshCmsPage: propJshCmsPage, componentExtractor, ['cms-content']: contentAreaName = 'body', ...otherProps } = props;
+  const { children, jshCmsPage: propJshCmsPage, jshCmsContentComponents, ['cms-content']: contentAreaName = 'body', ...otherProps } = props;
   const jshCmsPage = propJshCmsPage ?? contextJshCmsPage;
   if (jshCmsPage?.content[contentAreaName]) {
     return (
       <>
         <JshCmsContentAreaBody contentAreaName={contentAreaName} content={jshCmsPage.content[contentAreaName]} {...otherProps} />
-        <JshCmsContentAreaPortals jshCmsPage={jshCmsPage} contentAreaName={contentAreaName} componentExtractor={componentExtractor} />
+        <JshCmsContentAreaPortals jshCmsPage={jshCmsPage} contentAreaName={contentAreaName} jshCmsContentComponents={jshCmsContentComponents} />
       </>
     );
   } else {
     return (
       <>
         <JshCmsContentAreaBody contentAreaName={contentAreaName} {...otherProps}>{children}</JshCmsContentAreaBody>
-        <JshCmsContentAreaPortals jshCmsPage={jshCmsPage} contentAreaName={contentAreaName} componentExtractor={componentExtractor} />
+        <JshCmsContentAreaPortals jshCmsPage={jshCmsPage} contentAreaName={contentAreaName} jshCmsContentComponents={jshCmsContentComponents} />
       </>
     );
   }

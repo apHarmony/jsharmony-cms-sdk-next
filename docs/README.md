@@ -6,14 +6,17 @@ jsharmony-cms-sdk-next
 
 ### Classes
 
+- [JshCmsContentComponent](classes/JshCmsContentComponent.md)
 - [JshCmsPage](classes/JshCmsPage.md)
 - [JshCmsRouter](classes/JshCmsRouter.md)
 
 ### Interfaces
 
-- [JshCmsComponent](interfaces/JshCmsComponent.md)
 - [JshCmsConfig](interfaces/JshCmsConfig.md)
 - [JshCmsContentAreaProps](interfaces/JshCmsContentAreaProps.md)
+- [JshCmsContentComponentConfig](interfaces/JshCmsContentComponentConfig.md)
+- [JshCmsContentComponentInstance](interfaces/JshCmsContentComponentInstance.md)
+- [JshCmsContentComponentRender](interfaces/JshCmsContentComponentRender.md)
 - [JshCmsContextData](interfaces/JshCmsContextData.md)
 - [JshCmsElementProps](interfaces/JshCmsElementProps.md)
 - [JshCmsMetadataProps](interfaces/JshCmsMetadataProps.md)
