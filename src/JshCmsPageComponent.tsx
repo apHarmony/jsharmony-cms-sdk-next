@@ -19,7 +19,7 @@ along with this package.  If not, see <http://www.gnu.org/licenses/>.
 
 import { useJshCms } from './JshCmsContext';
 import { JshCmsPage } from './JshCmsPage';
-import React, { useLayoutEffect, useState } from 'react'
+import React, { useLayoutEffect, useState, useEffect } from 'react'
 
 /**
  * @public
@@ -62,6 +62,8 @@ export function useJshCmsPageComponentData<T>(props: { jshCmsPage?: JshCmsPage; 
       if (eventIdx >= 0) {window.jsHarmonyCMSInstance.componentManager.onNotifyUpdate.splice(eventIdx, 1);}
     };
   }, [setStrData, jshCmsPage, componentId]);
+
+  useEffect(() => { setStrData(jshCmsPage?.content[contentAreaName] || ''); }, [jshCmsPage?.content[contentAreaName]]);
 
   let componentData: (T|null) = null;
   try {

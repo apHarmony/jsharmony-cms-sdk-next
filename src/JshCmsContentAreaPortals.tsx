@@ -97,7 +97,7 @@ export const JshCmsContentAreaPortals: React.VFC<Props> = ({
   if (!jshCmsContentComponents?.length) {return <></>;}
 
   const [components, setComponents] = useState<JshCmsContentComponentInstance[]>([]);
-  const isInit = useRef(false);
+  const lastContent = useRef<string|null>(null);
 
   useLayoutEffect(() => {
     if (!window.jsHarmonyCMSInstance || !jshCmsPage || !jshCmsPage.isInEditor) {return undefined;}
@@ -149,13 +149,14 @@ export const JshCmsContentAreaPortals: React.VFC<Props> = ({
 
   //Publish mode
   useEffect(() => {
-    if (isInit.current) {return;}
-    isInit.current = true;
     if (!jshCmsPage?.isInEditor) {
+      const newContent = (jshCmsPage?.content[contentAreaName]??null);
+      if (lastContent.current===newContent) {return;}
+      lastContent.current = newContent;
       const newComponents = extractComponents(document.querySelector(`[cms-content-editor="page.content.${contentAreaName}"]`) as HTMLDivElement, jshCmsContentComponents);
       setComponents(newComponents);
     }
-  }, []);
+  }, [jshCmsPage?.content[contentAreaName]]);
 
   return (
     <>
