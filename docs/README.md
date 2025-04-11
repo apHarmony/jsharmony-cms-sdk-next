@@ -20,6 +20,7 @@ jsharmony-cms-sdk-next
 - [JshCmsContextData](interfaces/JshCmsContextData.md)
 - [JshCmsElementProps](interfaces/JshCmsElementProps.md)
 - [JshCmsMetadataProps](interfaces/JshCmsMetadataProps.md)
+- [JshCmsPageComponentProps](interfaces/JshCmsPageComponentProps.md)
 - [JshCmsPageConfigDefinition](interfaces/JshCmsPageConfigDefinition.md)
 - [JshCmsPageConfigProps](interfaces/JshCmsPageConfigProps.md)
 - [JshCmsPageRequest](interfaces/JshCmsPageRequest.md)
@@ -35,11 +36,13 @@ jsharmony-cms-sdk-next
 - [JshCmsEditor](README.md#jshcmseditor)
 - [JshCmsFooter](README.md#jshcmsfooter)
 - [JshCmsHead](README.md#jshcmshead)
+- [JshCmsPageComponent](README.md#jshcmspagecomponent)
 - [JshCmsPageConfig](README.md#jshcmspageconfig)
 - [JshCmsProvider](README.md#jshcmsprovider)
 - [JshCmsScript](README.md#jshcmsscript)
 - [JshCmsStyle](README.md#jshcmsstyle)
 - [useJshCms](README.md#usejshcms)
+- [useJshCmsPageComponentData](README.md#usejshcmspagecomponentdata)
 
 ## Functions
 
@@ -188,6 +191,24 @@ Note: CMS was designed to support additional head tags. Next.js takes full contr
 
 ___
 
+### JshCmsPageComponent
+
+▸ **JshCmsPageComponent**(`props`): `Element`
+
+JshCmsPageComponent - Page Component.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `props` | [`JshCmsPageComponentProps`](interfaces/JshCmsPageComponentProps.md) |
+
+#### Returns
+
+`Element`
+
+___
+
 ### JshCmsPageConfig
 
 ▸ **JshCmsPageConfig**(`props`): `undefined` \| `Element`
@@ -303,3 +324,32 @@ ___
 #### Returns
 
 [`JshCmsContextData`](interfaces/JshCmsContextData.md)
+
+___
+
+### useJshCmsPageComponentData
+
+▸ **useJshCmsPageComponentData**\<`T`\>(`props`): `Object`
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `props` | `Object` |
+| `props.componentId` | `string` |
+| `props.contentAreaName?` | `string` |
+| `props.jshCmsPage?` | [`JshCmsPage`](classes/JshCmsPage.md) |
+
+#### Returns
+
+`Object`
+
+| Name | Type |
+| :------ | :------ |
+| `componentData` | `T` \| ``null`` |

@@ -27,7 +27,7 @@ declare global {
   interface Window {
     jsHarmonyCMSInstance?: {
       componentManager: {
-        onNotifyUpdate: ((props: { element: HTMLDivElement, componentId: string, contentAreaName: string }) => void)[];
+        onNotifyUpdate: ((props: { element: HTMLDivElement, componentId: string, contentAreaName: string, content?: string }) => void)[];
       };
     };
   }
