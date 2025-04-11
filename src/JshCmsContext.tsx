@@ -17,7 +17,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with this package.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { JshCmsPage } from './JshCmsPage';
 import { JshCmsConfig } from './JshCmsRouter';
 
@@ -55,6 +55,8 @@ export function JshCmsProvider(props: JshCmsProviderProps){
   const { children, jshCmsConfig, jshCmsPage } = props;
   const [localJshCmsConfig, setJshCmsConfig] = useState<JshCmsConfig|undefined>(jshCmsConfig);
   const [localJshCmsPage, setJshCmsPage] = useState<JshCmsPage|undefined>(jshCmsPage);
+  useEffect(() => { setJshCmsConfig(props.jshCmsConfig); }, [props.jshCmsConfig]);
+  useEffect(() => { setJshCmsPage(props.jshCmsPage); }, [props.jshCmsPage]);
 
   const value = { jshCmsConfig: localJshCmsConfig, jshCmsPage: localJshCmsPage, setJshCmsConfig, setJshCmsPage };
   return <JshCmsContext.Provider value={value}>{children}</JshCmsContext.Provider>

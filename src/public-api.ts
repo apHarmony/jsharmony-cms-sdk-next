@@ -19,6 +19,7 @@ along with this package.  If not, see <http://www.gnu.org/licenses/>.
 
 export * from './JshCmsContext';
 export * from './JshCmsContentComponent';
+export * from './JshCmsPageComponent';
 export * from './JshCmsPage';
 export * from './JshCmsContentArea';
 export * from './JshCmsRouter';

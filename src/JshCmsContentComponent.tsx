@@ -40,7 +40,7 @@ export interface JshCmsContentComponent<P = {}> { // eslint-disable-line @typesc
   contextTypes?: ValidationMap<any> | undefined; // eslint-disable-line @typescript-eslint/no-explicit-any
   defaultProps?: Partial<P> | undefined;
   displayName?: string | undefined;
-	jshCmsComponentConfig?: JshCmsContentComponentConfig | undefined;
+  jshCmsComponentConfig?: JshCmsContentComponentConfig | undefined;
 }
 
 /**

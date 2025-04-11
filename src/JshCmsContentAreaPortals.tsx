@@ -27,7 +27,7 @@ declare global {
   interface Window {
     jsHarmonyCMSInstance?: {
       componentManager: {
-        onNotifyUpdate: ((props: { element: HTMLDivElement, componentId: string, contentAreaName: string }) => void)[];
+        onNotifyUpdate: ((props: { element: HTMLDivElement, componentId: string, contentAreaName: string, content?: string }) => void)[];
       };
     };
   }
@@ -37,9 +37,9 @@ declare global {
  * @internal
  */
 function extractComponents(contentAreaElement: HTMLDivElement, jshCmsContentComponents: JshCmsContentComponent<any>[]): JshCmsContentComponentInstance[] { // eslint-disable-line @typescript-eslint/no-explicit-any
-	if (!jshCmsContentComponents?.length) {
-		return [];
-	}
+  if (!jshCmsContentComponents?.length) {
+    return [];
+  }
   const componentInstances: JshCmsContentComponentInstance[] = [];
   jshCmsContentComponents.forEach(function(jshCmsContentComponent){
     const componentConfig = jshCmsContentComponent.jshCmsComponentConfig;
@@ -129,9 +129,19 @@ export const JshCmsContentAreaPortals: React.VFC<Props> = ({
       setComponents(curComponents);
     };
 
-    window.jsHarmonyCMSInstance.componentManager.onNotifyUpdate.push(updateEventHandler);
+    let bindTimer: number | null = null;
+    function bindEventHandler(){
+      bindTimer = null;
+      if (window.jsHarmonyCMSInstance?.componentManager?.onNotifyUpdate){
+        window.jsHarmonyCMSInstance.componentManager.onNotifyUpdate.push(updateEventHandler);
+      } else {
+        bindTimer = window.setTimeout(bindEventHandler, 10);
+      }
+    }
+    bindEventHandler();
     return () => {
-      if (!window.jsHarmonyCMSInstance) {return;}
+      if (bindTimer) {window.clearTimeout(bindTimer);}
+      if (!window.jsHarmonyCMSInstance?.componentManager) {return;}
       const eventIdx = window.jsHarmonyCMSInstance.componentManager.onNotifyUpdate.indexOf(updateEventHandler);
       if (eventIdx >= 0) {window.jsHarmonyCMSInstance.componentManager.onNotifyUpdate.splice(eventIdx, 1);}
     };
