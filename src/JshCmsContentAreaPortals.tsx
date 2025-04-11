@@ -100,7 +100,7 @@ export const JshCmsContentAreaPortals: React.VFC<Props> = ({
   const isInit = useRef(false);
 
   useLayoutEffect(() => {
-    if (!isInit.current || !window.jsHarmonyCMSInstance || !jshCmsPage || !jshCmsPage.isInEditor) {return undefined;}
+    if (!window.jsHarmonyCMSInstance || !jshCmsPage || !jshCmsPage.isInEditor) {return undefined;}
 
     const curComponents = components.slice(0);
 
@@ -110,7 +110,7 @@ export const JshCmsContentAreaPortals: React.VFC<Props> = ({
       if (!componentId) {return;}
 
       //Return if component is not in the content area
-      if (props.contentAreaName !== contentAreaName) {return;}
+      if (props.contentAreaName !== `page.content.${contentAreaName}`) {return;}
 
       //Prune removed components
       for (let i=0; i<curComponents.length; i++){

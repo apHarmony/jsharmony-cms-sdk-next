@@ -2,7 +2,7 @@
 
 # Interface: JshCmsContentComponentRender
 
-JshCmsContentComponentInstance - Content Component Instance.
+JshCmsContentComponentInstance - Content Component Render Parameters.
 
 ## Table of contents
 

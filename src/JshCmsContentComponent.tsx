@@ -95,7 +95,7 @@ export interface JshCmsContentComponentInstance {
 
 
 /**
- * JshCmsContentComponentInstance - Content Component Instance.
+ * JshCmsContentComponentInstance - Content Component Render Parameters.
  * @public
  */
 export interface JshCmsContentComponentRender {
