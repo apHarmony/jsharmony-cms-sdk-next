@@ -16,6 +16,7 @@ jsharmony-cms-sdk-next
 - [JshCmsContentAreaProps](interfaces/JshCmsContentAreaProps.md)
 - [JshCmsContentComponentConfig](interfaces/JshCmsContentComponentConfig.md)
 - [JshCmsContentComponentInstance](interfaces/JshCmsContentComponentInstance.md)
+- [JshCmsContentComponentProps](interfaces/JshCmsContentComponentProps.md)
 - [JshCmsContentComponentRender](interfaces/JshCmsContentComponentRender.md)
 - [JshCmsContextData](interfaces/JshCmsContextData.md)
 - [JshCmsElementProps](interfaces/JshCmsElementProps.md)

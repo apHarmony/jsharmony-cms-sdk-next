@@ -19,15 +19,15 @@ along with this package.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
-import { JshCmsPage } from './JshCmsPage';
-import { JshCmsContentComponent, JshCmsContentComponentInstance } from './JshCmsContentComponent';
+import { JshCmsPage, notifyUpdateProps } from './JshCmsPage';
+import { JshCmsContentComponent, JshCmsContentComponentInstance, JshCmsContentComponentProps } from './JshCmsContentComponent';
 import { createPortal } from 'react-dom';
 
 declare global {
   interface Window {
     jsHarmonyCMSInstance?: {
       componentManager: {
-        onNotifyUpdate: ((props: { element: HTMLDivElement, componentId: string, contentAreaName: string, content?: string }) => void)[];
+        onNotifyUpdate: ((props: { element: HTMLElement, componentId: string, contentAreaName: string, content?: string }) => void)[];
       };
     };
   }
@@ -36,7 +36,7 @@ declare global {
 /**
  * @internal
  */
-function extractComponents(contentAreaElement: HTMLDivElement, jshCmsContentComponents: JshCmsContentComponent<any>[]): JshCmsContentComponentInstance[] { // eslint-disable-line @typescript-eslint/no-explicit-any
+function extractComponents(contentAreaElement: HTMLElement, jshCmsContentComponents: JshCmsContentComponent<any>[], contentComponentProps: JshCmsContentComponentProps): JshCmsContentComponentInstance[] { // eslint-disable-line @typescript-eslint/no-explicit-any
   if (!jshCmsContentComponents?.length) {
     return [];
   }
@@ -47,12 +47,20 @@ function extractComponents(contentAreaElement: HTMLDivElement, jshCmsContentComp
     const componentName = (jshCmsContentComponent.name||jshCmsContentComponent.displayName||'');
     const componentContainers = contentAreaElement?.querySelectorAll(componentConfig.selector);
     componentContainers.forEach(function(componentContainer, index) {
+      let instanceProps: JshCmsContentComponentProps|null = null;
+      if (componentContainer.hasAttribute('cms-component-virtual')){
+        instanceProps = Object.assign({}, contentComponentProps);
+        const componentData: unknown = JSON.parse(atob(componentContainer.getAttribute('data-component-data')??'')||'null');
+        const componentProperties: unknown = JSON.parse(atob(componentContainer.getAttribute('data-component-properties')??'')||'null');
+        if (!instanceProps.data && componentData) {instanceProps.data = componentData;}
+        if (!instanceProps.properties && componentProperties) {instanceProps.properties = componentProperties;}
+      }
       if (componentConfig.onBeforeRender){
-        componentConfig.onBeforeRender(componentContainer);
+        componentConfig.onBeforeRender(componentContainer, instanceProps);
       }
       const componentKey = `${componentName}_${  index  }_${  Math.random().toString().substring(0, 15)  }-${  Math.random().toString().substring(0, 15)  }-${  Math.random().toString().substring(0, 15)  }-${ Math.random().toString().substring(0, 15)}`;
       if (componentConfig.render){
-        const renderResult = componentConfig.render(componentContainer);
+        const renderResult = componentConfig.render(componentContainer, instanceProps);
         if (renderResult){
           componentInstances.push({
             container: renderResult.container ?? componentContainer,
@@ -64,12 +72,12 @@ function extractComponents(contentAreaElement: HTMLDivElement, jshCmsContentComp
         componentContainer.innerHTML = '';
         componentInstances.push({
           container: componentContainer,
-          element: React.createElement(jshCmsContentComponent),
+          element: React.createElement(jshCmsContentComponent, instanceProps),
           key: componentKey
         });
       }
       if (componentConfig.onRender){
-        componentConfig.onRender(componentContainer);
+        componentConfig.onRender(componentContainer, instanceProps);
       }
     });
   });
@@ -105,7 +113,7 @@ export const JshCmsContentAreaPortals: React.VFC<Props> = ({
     const curComponents = components.slice(0);
 
     //Editor mode
-    const updateEventHandler = (props: { element: HTMLDivElement, componentId: string, contentAreaName: string }) => {
+    const updateEventHandler = (props: notifyUpdateProps) => {
       const componentId = props.componentId;
       if (!componentId) {return;}
 
@@ -122,7 +130,16 @@ export const JshCmsContentAreaPortals: React.VFC<Props> = ({
 
       //Extract and initialize components
       const contentAreaElement = props.element;
-      const subComponents = extractComponents(contentAreaElement, jshCmsContentComponents);
+      const contentComponentProps = {
+        data: props.data ?? null,
+        isGridRowPreview: props.isGridRowPreview ?? false,
+        isInComponentEditor: (props.isItemPreview ?? false) || (props.isGridRowPreview ?? false),
+        isInEditor: true,
+        isInPageEditor: true,
+        isItemPreview: props.isItemPreview ?? false,
+        properties: props.properties ?? null
+      };
+      const subComponents = extractComponents(contentAreaElement, jshCmsContentComponents, contentComponentProps);
       subComponents.forEach(function(subComponent) {
         curComponents.push(subComponent);
       });
@@ -153,7 +170,16 @@ export const JshCmsContentAreaPortals: React.VFC<Props> = ({
       const newContent = (jshCmsPage?.content[contentAreaName]??null);
       if (lastContent.current===newContent) {return;}
       lastContent.current = newContent;
-      const newComponents = extractComponents(document.querySelector(`[cms-content-editor="page.content.${contentAreaName}"]`) as HTMLDivElement, jshCmsContentComponents);
+      const contentComponentProps = {
+        data: null,
+        isGridRowPreview: false,
+        isInComponentEditor: false,
+        isInEditor: false,
+        isInPageEditor: false,
+        isItemPreview: false,
+        properties: null
+      };
+      const newComponents = extractComponents(document.querySelector(`[cms-content-editor="page.content.${contentAreaName}"]`) as HTMLElement, jshCmsContentComponents, contentComponentProps);
       setComponents(newComponents);
     }
   }, [jshCmsPage?.content[contentAreaName]]);

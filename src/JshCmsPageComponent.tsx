@@ -18,7 +18,7 @@ along with this package.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 import { useJshCms } from './JshCmsContext';
-import { JshCmsPage } from './JshCmsPage';
+import { JshCmsPage, notifyUpdateProps } from './JshCmsPage';
 import React, { useLayoutEffect, useState, useEffect } from 'react'
 
 /**
@@ -36,7 +36,7 @@ export function useJshCmsPageComponentData<T>(props: { jshCmsPage?: JshCmsPage; 
     if (!window.jsHarmonyCMSInstance || !jshCmsPage || !jshCmsPage.isInEditor) {return undefined;}
 
     // Editor mode
-    const updateEventHandler = (eventProps: { element: HTMLDivElement, componentId: string, contentAreaName: string, content?: string }) => {
+    const updateEventHandler = (eventProps: notifyUpdateProps) => {
       if (eventProps.componentId !== componentId) {return;}
 
       // Return if component is not in the content area

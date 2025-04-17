@@ -17,17 +17,18 @@ JshCmsContentComponent - Content Component Config.
 
 ### onBeforeRender
 
-• `Optional` **onBeforeRender**: (`componentContainer`: `Element`) => `void`
+• `Optional` **onBeforeRender**: (`componentContainer`: `Element`, `contentComponentProps`: ``null`` \| [`JshCmsContentComponentProps`](JshCmsContentComponentProps.md)) => `void`
 
 #### Type declaration
 
-▸ (`componentContainer`): `void`
+▸ (`componentContainer`, `contentComponentProps`): `void`
 
 ##### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `componentContainer` | `Element` |
+| `contentComponentProps` | ``null`` \| [`JshCmsContentComponentProps`](JshCmsContentComponentProps.md) |
 
 ##### Returns
 
@@ -37,17 +38,18 @@ ___
 
 ### onRender
 
-• `Optional` **onRender**: (`componentContainer`: `Element`) => `void`
+• `Optional` **onRender**: (`componentContainer`: `Element`, `contentComponentProps`: ``null`` \| [`JshCmsContentComponentProps`](JshCmsContentComponentProps.md)) => `void`
 
 #### Type declaration
 
-▸ (`componentContainer`): `void`
+▸ (`componentContainer`, `contentComponentProps`): `void`
 
 ##### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `componentContainer` | `Element` |
+| `contentComponentProps` | ``null`` \| [`JshCmsContentComponentProps`](JshCmsContentComponentProps.md) |
 
 ##### Returns
 
@@ -57,17 +59,18 @@ ___
 
 ### render
 
-• `Optional` **render**: (`componentContainer`: `Element`) => `undefined` \| [`JshCmsContentComponentRender`](JshCmsContentComponentRender.md)
+• `Optional` **render**: (`componentContainer`: `Element`, `contentComponentProps`: ``null`` \| [`JshCmsContentComponentProps`](JshCmsContentComponentProps.md)) => `undefined` \| [`JshCmsContentComponentRender`](JshCmsContentComponentRender.md)
 
 #### Type declaration
 
-▸ (`componentContainer`): `undefined` \| [`JshCmsContentComponentRender`](JshCmsContentComponentRender.md)
+▸ (`componentContainer`, `contentComponentProps`): `undefined` \| [`JshCmsContentComponentRender`](JshCmsContentComponentRender.md)
 
 ##### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `componentContainer` | `Element` |
+| `contentComponentProps` | ``null`` \| [`JshCmsContentComponentProps`](JshCmsContentComponentProps.md) |
 
 ##### Returns
 

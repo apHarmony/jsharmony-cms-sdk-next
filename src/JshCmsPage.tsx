@@ -537,3 +537,17 @@ function joinUrlPath(a: string | undefined, b: string | undefined){
   while (b.length && ((bStart==='/')||(bStart==='\\'))){ b = b.substr(1); if (b.length) {bStart=b[0];} }
   return `${a  }/${  b}`;
 }
+
+/**
+ * @internal
+ */
+export interface notifyUpdateProps {
+  element: HTMLElement;
+  componentId: string;
+  contentAreaName: string;
+  data?: unknown;
+  properties?: unknown;
+  isItemPreview?: boolean;
+  isGridRowPreview?: boolean;
+  content?: string;
+}

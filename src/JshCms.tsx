@@ -17,7 +17,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with this package.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { JshCmsProvider } from './JshCmsContext';
 import { JshCmsPage, JshCmsStyle, JshCmsScript, JshCmsHead, JshCmsEditor, JshCmsFooter } from './JshCmsPage';
 import { JshCmsConfig } from './JshCmsRouter';
@@ -47,6 +47,14 @@ export interface JshCmsProps {
  */
 export function JshCms(props: JshCmsProps) {
   const { jshCmsConfig, jshCmsPage, children } = props;
+
+  useEffect(() => {
+    if (jshCmsPage?.isInEditor){
+      document.querySelector('.jshCmsInitializing')?.remove();
+    }
+  });
+
+
   return (
     <JshCmsProvider jshCmsConfig={jshCmsConfig} jshCmsPage={jshCmsPage}>
       <JshCmsStyle />
@@ -61,6 +69,7 @@ export function JshCms(props: JshCmsProps) {
       </Head>
       { children }
       <JshCmsFooter />
+      { jshCmsPage?.isInEditor && (<script className='removeOnPublish jshCmsInitializing'></script>) }
     </JshCmsProvider>
   );
 }

@@ -44,8 +44,8 @@ export const JshCmsContentAreaBody: React.VFC<JshCmsContentAreaBodyProps> = ({
   );
 
   if (children){
-    return <div {...otherProps} cms-content-editor={`page.content.${contentAreaName}`}>{ children }</div>;
+    return <div {...otherProps} cms-content-editor={`page.content.${contentAreaName}`} contentEditable='true'>{ children }</div>;
   } else {
-    return <div {...otherProps} cms-content-editor={`page.content.${contentAreaName}`} dangerouslySetInnerHTML={bodyMemo} />;
+    return <div {...otherProps} cms-content-editor={`page.content.${contentAreaName}`} contentEditable='true' dangerouslySetInnerHTML={bodyMemo} />;
   }
 };

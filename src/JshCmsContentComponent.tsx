@@ -20,14 +20,27 @@ along with this package.  If not, see <http://www.gnu.org/licenses/>.
 import { ReactElement, PropsWithChildren, WeakValidationMap, ValidationMap, createElement } from 'react'
 
 /**
+ * @public
+ */
+export interface JshCmsContentComponentProps {
+  data: unknown;
+  properties: unknown;
+  isInEditor: boolean;
+  isInPageEditor: boolean;
+  isInComponentEditor: boolean;
+  isItemPreview: boolean;
+  isGridRowPreview: boolean;
+}
+
+/**
  * JshCmsContentComponent - Content Component Config.
  * @public
  */
 export interface JshCmsContentComponentConfig {
   selector: string;
-  onBeforeRender?: (componentContainer: Element) => void;
-  onRender?: (componentContainer: Element) => void;
-  render?: (componentContainer: Element) => JshCmsContentComponentRender | undefined;
+  onBeforeRender?: (componentContainer: Element, contentComponentProps: JshCmsContentComponentProps|null) => void;
+  onRender?: (componentContainer: Element, contentComponentProps: JshCmsContentComponentProps|null) => void;
+  render?: (componentContainer: Element, contentComponentProps: JshCmsContentComponentProps|null) => JshCmsContentComponentRender | undefined;
 }
 
 /**
