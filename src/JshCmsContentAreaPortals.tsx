@@ -102,7 +102,7 @@ export const JshCmsContentAreaPortals: React.VFC<Props> = ({
   jshCmsContentComponents
 }) => {
 
-  if (!jshCmsContentComponents?.length) {return <></>;}
+  if (!jshCmsContentComponents?.length || typeof(window) === 'undefined') {return <></>;}
 
   const [components, setComponents] = useState<JshCmsContentComponentInstance[]>([]);
   const lastContent = useRef<string|null>(null);
