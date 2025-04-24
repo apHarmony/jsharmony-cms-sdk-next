@@ -32,36 +32,39 @@ export function useJshCmsPageComponentData<T>(props: { jshCmsPage?: JshCmsPage; 
 
   const [strData, setStrData] = useState(jshCmsPage?.content[contentAreaName] || '');
 
-  useLayoutEffect(() => {
-    if (!window.jsHarmonyCMSInstance || !jshCmsPage || !jshCmsPage.isInEditor) {return undefined;}
+  if (typeof(window) !== 'undefined') {
+    useLayoutEffect(() => {
+      if (!window.jsHarmonyCMSInstance || !jshCmsPage || !jshCmsPage.isInEditor) {return undefined;}
 
-    // Editor mode
-    const updateEventHandler = (eventProps: notifyUpdateProps) => {
-      if (eventProps.componentId !== componentId) {return;}
+      // Editor mode
+      const updateEventHandler = (eventProps: notifyUpdateProps) => {
+        console.log('update', componentId, contentAreaName, eventProps);
+        if (eventProps.componentId !== componentId) {return;}
 
-      // Return if component is not in the content area
-      if (eventProps.contentAreaName) {return;}
+        // Return if component is not in the content area
+        if (eventProps.contentAreaName) {return;}
 
-      setStrData(eventProps.content ?? '');
-    };
+        setStrData(eventProps.content ?? '');
+      };
 
-    let bindTimer: number | null = null;
-    function bindEventHandler(){
-      bindTimer = null;
-      if (window.jsHarmonyCMSInstance?.componentManager?.onNotifyUpdate){
-        window.jsHarmonyCMSInstance.componentManager.onNotifyUpdate.push(updateEventHandler);
-      } else {
-        bindTimer = window.setTimeout(bindEventHandler, 10);
+      let bindTimer: number | null = null;
+      function bindEventHandler(){
+        bindTimer = null;
+        if (window.jsHarmonyCMSInstance?.componentManager?.onNotifyUpdate){
+          window.jsHarmonyCMSInstance.componentManager.onNotifyUpdate.push(updateEventHandler);
+        } else {
+          bindTimer = window.setTimeout(bindEventHandler, 10);
+        }
       }
-    }
-    bindEventHandler();
-    return () => {
-      if (bindTimer) {window.clearTimeout(bindTimer);}
-      if (!window.jsHarmonyCMSInstance?.componentManager) {return;}
-      const eventIdx = window.jsHarmonyCMSInstance.componentManager.onNotifyUpdate.indexOf(updateEventHandler);
-      if (eventIdx >= 0) {window.jsHarmonyCMSInstance.componentManager.onNotifyUpdate.splice(eventIdx, 1);}
-    };
-  }, [setStrData, jshCmsPage, componentId]);
+      bindEventHandler();
+      return () => {
+        if (bindTimer) {window.clearTimeout(bindTimer);}
+        if (!window.jsHarmonyCMSInstance?.componentManager) {return;}
+        const eventIdx = window.jsHarmonyCMSInstance.componentManager.onNotifyUpdate.indexOf(updateEventHandler);
+        if (eventIdx >= 0) {window.jsHarmonyCMSInstance.componentManager.onNotifyUpdate.splice(eventIdx, 1);}
+      };
+    }, [setStrData, jshCmsPage, componentId]);
+  }
 
   useEffect(() => { setStrData(jshCmsPage?.content[contentAreaName] || ''); }, [jshCmsPage?.content[contentAreaName]]);
 
