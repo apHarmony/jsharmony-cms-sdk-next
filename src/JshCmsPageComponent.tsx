@@ -38,7 +38,6 @@ export function useJshCmsPageComponentData<T>(props: { jshCmsPage?: JshCmsPage; 
 
       // Editor mode
       const updateEventHandler = (eventProps: notifyUpdateProps) => {
-        console.log('update', componentId, contentAreaName, eventProps);
         if (eventProps.componentId !== componentId) {return;}
 
         // Return if component is not in the content area
